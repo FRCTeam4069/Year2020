@@ -44,9 +44,12 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
+
 //    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
     implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:76fbad5f78'
     implementation 'com.github.FRCTeam4069.SaturnLibrary:core:76fbad5f78'
+    implementation "com.github.FRCTeam4069:Keigen:1.4.0"
     implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:0.7.3'
 }
 
