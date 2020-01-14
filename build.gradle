@@ -34,22 +34,24 @@ repositories {
 }
 
 dependencies {
-    compile wpi.deps.wpilib()
+    implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
 
-
-    compile wpi.deps.vendor.java()
+    implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "frc.team4069.saturn.lib:wpi:2020.1.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+//    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:76fbad5f78'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:76fbad5f78'
+    implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:0.7.3'
 }
 
 jar {
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }
 
