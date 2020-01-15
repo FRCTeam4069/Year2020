@@ -3,8 +3,10 @@ package frc.team4069.robot.subsystem
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.InvertType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.Timer
 import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.mathematics.TAU
@@ -20,6 +22,8 @@ object Flywheel : SaturnSubsystem() {
     private val encoder = Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
 
     val controller = FlywheelController()
+    private val enabledVoltages = mutableListOf(listOf<Any>())
+    private var enabledVelocities = mutableListOf(listOf<Any>())
 
     fun enable() {
         controller.enable()
@@ -39,10 +43,15 @@ object Flywheel : SaturnSubsystem() {
 
         encoder.samplesToAverage = 100
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
+        enabledVoltages.add(listOf("Time", "Voltage"))
+        enabledVelocities.add(listOf("Time", "Velocity"))
 
         GlobalScope.launchFrequency(100.hertz) {
             val u = controller.update()
             if(controller.enabled) {
+                val now = Timer.getFPGATimestamp()
+                enabledVoltages.add(listOf(now, u.value))
+                enabledVelocities.add(listOf(now, velocity.value))
                 talon.set(ControlMode.PercentOutput, u / 12.volt)
             }
         }
@@ -51,6 +60,17 @@ object Flywheel : SaturnSubsystem() {
     override fun setNeutral() {
         controller.disable()
         talon.set(ControlMode.PercentOutput, 0.0)
+        csvWriter().open("/home/lvuser/ShooterVoltage.csv", append = false) {
+            writeAll(enabledVoltages)
+        }
+        enabledVoltages.clear()
+        enabledVoltages.add(listOf("Time", "Voltage"))
+
+        csvWriter().open("/home/lvuser/ShooterVelocity.csv", append = false) {
+            writeAll(enabledVelocities)
+        }
+        enabledVelocities.clear()
+        enabledVelocities.add(listOf("Time", "Velocity"))
     }
 
     fun setDutyCycle(percent: Double) {

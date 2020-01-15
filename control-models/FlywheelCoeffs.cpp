@@ -4,9 +4,9 @@
 
 frc::StateSpacePlantCoeffs<1, 1, 1> MakeFlywheelPlantCoeffs() {
   Eigen::Matrix<double, 1, 1> A;
-  A(0, 0) = 0.6669053988415085;
+  A(0, 0) = 0.9975101382517066;
   Eigen::Matrix<double, 1, 1> B;
-  B(0, 0) = 18.24341498454473;
+  B(0, 0) = 0.13636840996605396;
   Eigen::Matrix<double, 1, 1> C;
   C(0, 0) = 1.0;
   Eigen::Matrix<double, 1, 1> D;
@@ -16,9 +16,9 @@ frc::StateSpacePlantCoeffs<1, 1, 1> MakeFlywheelPlantCoeffs() {
 
 frc::StateSpaceControllerCoeffs<1, 1, 1> MakeFlywheelControllerCoeffs() {
   Eigen::Matrix<double, 1, 1> K;
-  K(0, 0) = 0.03648844840620211;
+  K(0, 0) = 0.21880790624410937;
   Eigen::Matrix<double, 1, 1> Kff;
-  Kff(0, 0) = 0.05471299690596007;
+  Kff(0, 0) = 0.00784641573077454;
   Eigen::Matrix<double, 1, 1> Umin;
   Umin(0, 0) = -12.0;
   Eigen::Matrix<double, 1, 1> Umax;
@@ -28,7 +28,7 @@ frc::StateSpaceControllerCoeffs<1, 1, 1> MakeFlywheelControllerCoeffs() {
 
 frc::StateSpaceObserverCoeffs<1, 1, 1> MakeFlywheelObserverCoeffs() {
   Eigen::Matrix<double, 1, 1> K;
-  K(0, 0) = 0.9999000144450966;
+  K(0, 0) = 0.999900019945291;
   return frc::StateSpaceObserverCoeffs<1, 1, 1>(K);
 }
 

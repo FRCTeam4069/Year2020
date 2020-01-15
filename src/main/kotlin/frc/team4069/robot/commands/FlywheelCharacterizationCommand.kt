@@ -16,7 +16,7 @@ class FlywheelCharacterizationCommand : SaturnCommand(Flywheel) {
     val dt = DeltaTime()
 
     override fun initialize() {
-        Flywheel.setDutyCycle(0.5)
+        Flywheel.setDutyCycle(0.8)
     }
 
     override fun execute() {

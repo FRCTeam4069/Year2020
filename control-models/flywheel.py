@@ -36,14 +36,14 @@ class Flywheel(fct.System):
         # Number of motors
         num_motors = 2.0
         # Flywheel moment of inertia in kg-m^2
-        J = 0.00016
+        J = 0.026
         # Gear ratio
         G = 3.0
 
         return fct.models.flywheel(fct.models.MOTOR_775PRO, num_motors, J, G)
 
     def design_controller_observer(self):
-        q = [9.42]
+        q = [50.0]
         r = [12.0]
         self.design_lqr(q, r)
         # self.place_controller_poles([0.87])
@@ -81,7 +81,7 @@ def main():
         if t[i] < l0:
             r = np.array([[0]])
         elif t[i] < l1:
-            r = np.array([[9000 / 60 * 2 * math.pi]])
+            r = np.array([[350.0]])
         else:
             r = np.array([[0]])
         refs.append(r)

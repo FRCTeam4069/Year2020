@@ -42,7 +42,6 @@ object Robot : SaturnRobot() {
     }
 
     override fun autonomousInit() {
-//        FlywheelCharacterizationCommand().schedule()
         Flywheel.enable()
         Flywheel.setReference(350.radian.velocity)
     }
