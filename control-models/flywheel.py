@@ -19,7 +19,7 @@ class Flywheel(fct.System):
         Keyword arguments:
         dt -- time between model/controller updates
         """
-        state_labels = [("Angular velocity", "rad/s")]
+        state_labels = [("Angular velocity", "rad/s"), ("Input Error", "V")]
         u_labels = [("Voltage", "V")]
         self.set_plot_labels(state_labels, u_labels)
 
@@ -43,30 +43,47 @@ class Flywheel(fct.System):
         return fct.models.flywheel(fct.models.MOTOR_775PRO, num_motors, J, G)
 
     def design_controller_observer(self):
-        q = [50.0]
+        q = [18.0]
         r = [12.0]
         self.design_lqr(q, r)
         # self.place_controller_poles([0.87])
         self.design_two_state_feedforward(q, r)
 
-        q_vel = 1.0
-        r_vel = 0.01
-        self.design_kalman_filter([q_vel], [r_vel])
+        A_aug = np.concatenate(
+            (np.concatenate((self.sysd.A, self.sysd.B), axis=1),
+             np.concatenate((np.array([[0]]), np.array([[0]])), axis=1)),
+            axis=0
+        )
+
+        B_aug = np.concatenate(
+            (self.sysd.B, np.array([[0]])), axis=0
+        )
+        C_aug = np.concatenate((self.sysd.C, np.array([[0]])), axis=1)
+        D_aug = self.sysd.D
+        K_aug = np.concatenate((self.K, np.array([[1]])), axis=1)
+        Kff_aug = np.concatenate((self.Kff, np.array([[0]])), axis=1)
+
+        self.sysd.A = A_aug
+        self.sysd.B = B_aug
+        self.sysd.C = C_aug
+        self.sysd.D = D_aug
+        self.K = K_aug
+        self.Kff = Kff_aug
+        self.sysd.states = 2
+        self.x = np.zeros((2, 1))
+        self.r = np.zeros((2, 1))
+        self.x_hat = np.zeros((2, 1))
+
+        q_vel = 0.75
+        r_vel = 0.9
+        self.design_kalman_filter([q_vel, 0.0], [r_vel])
         # self.place_observer_poles([0.3])
 
 
 def main():
     dt = 0.01
     flywheel = Flywheel(dt)
-    flywheel.export_cpp_coeffs("Flywheel", "subsystems/")
     flywheel.export_java_coeffs("Flywheel")
-
-    flywheel.plot_pzmaps()
-    if "--noninteractive" in sys.argv:
-        names = ["open-loop", "closed-loop", "observer"]
-        for i in range(3):
-            plt.figure(i + 1)
-            plt.savefig(f"flywheel_pzmap_{names[i]}.svg")
 
     # Set up graphing
     l0 = 0.1
@@ -79,11 +96,11 @@ def main():
     # Generate references for simulation
     for i in range(len(t)):
         if t[i] < l0:
-            r = np.array([[0]])
+            r = np.array([[0], [0]])
         elif t[i] < l1:
-            r = np.array([[350.0]])
+            r = np.array([[350.0], [0]])
         else:
-            r = np.array([[0]])
+            r = np.array([[0], [0]])
         refs.append(r)
 
     x_rec, ref_rec, u_rec, y_rec = flywheel.generate_time_responses(t, refs)

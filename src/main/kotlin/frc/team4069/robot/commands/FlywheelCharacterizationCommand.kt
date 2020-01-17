@@ -1,6 +1,5 @@
 package frc.team4069.robot.commands
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.robot.subsystem.Flywheel
 import frc.team4069.saturn.lib.commands.SaturnCommand
@@ -35,8 +34,5 @@ class FlywheelCharacterizationCommand : SaturnCommand(Flywheel) {
     }
 
     override fun end(interrupted: Boolean) {
-        csvWriter().open("/home/lvuser/flywheel.csv") {
-            writeAll(data)
-        }
     }
 }

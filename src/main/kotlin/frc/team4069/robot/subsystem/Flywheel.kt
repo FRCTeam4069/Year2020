@@ -3,10 +3,11 @@ package frc.team4069.robot.subsystem
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.InvertType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.Timer
+import frc.team4069.keigen.get
+import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.mathematics.TAU
@@ -14,16 +15,25 @@ import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
 import frc.team4069.saturn.lib.util.launchFrequency
 import kotlinx.coroutines.GlobalScope
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import org.zeromq.SocketType
+import org.zeromq.ZContext
+import org.zeromq.ZMQ
 
 object Flywheel : SaturnSubsystem() {
     private val talon = TalonSRX(RobotMap.Flywheel.MASTER_TALON_ID)
     private val slave = TalonSRX(RobotMap.Flywheel.SLAVE_TALON_ID)
 
-    private val encoder = Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
+    private val encoder =
+        Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
 
     val controller = FlywheelController()
-    private val enabledVoltages = mutableListOf(listOf<Any>())
-    private var enabledVelocities = mutableListOf(listOf<Any>())
+
+    // Used to communicate between the DS and robot code for data logging purposes
+    // data-logger/logger.py in robot code project is the client
+    private var zmqContext: ZContext
+    private var sock: ZMQ.Socket
 
     fun enable() {
         controller.enable()
@@ -38,21 +48,33 @@ object Flywheel : SaturnSubsystem() {
     }
 
     init {
-        talon.inverted = true
+        slave.inverted = true
         slave.follow(talon)
 
         encoder.samplesToAverage = 100
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
-        enabledVoltages.add(listOf("Time", "Voltage"))
-        enabledVelocities.add(listOf("Time", "Velocity"))
 
+        // Set up ZMQ context and bind a PUSH socket on 5802 (one of the team use ports)
+        zmqContext = ZContext()
+        sock = zmqContext.createSocket(SocketType.PUSH)
+        sock.bind("tcp://*:5802")
+
+        val json = Json(JsonConfiguration.Stable)
         GlobalScope.launchFrequency(100.hertz) {
             val u = controller.update()
-            if(controller.enabled) {
+            if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
-                enabledVoltages.add(listOf(now, u.value))
-                enabledVelocities.add(listOf(now, velocity.value))
-                talon.set(ControlMode.PercentOutput, u / 12.volt)
+
+                // Logging demand voltage, measured, and estimated states
+                val data = PublishedData(
+                    true, now, mapOf(
+                        "Voltage" to u.value, "Velocity" to velocity.value,
+                        "KF Velocity" to controller.observer.xHat[0]
+                    )
+                )
+                sock.send(json.stringify(PublishedData.serializer(), data))
+
+                talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
         }
     }
@@ -60,17 +82,11 @@ object Flywheel : SaturnSubsystem() {
     override fun setNeutral() {
         controller.disable()
         talon.set(ControlMode.PercentOutput, 0.0)
-        csvWriter().open("/home/lvuser/ShooterVoltage.csv", append = false) {
-            writeAll(enabledVoltages)
-        }
-        enabledVoltages.clear()
-        enabledVoltages.add(listOf("Time", "Voltage"))
+        val json = Json(JsonConfiguration.Stable)
+        val data = PublishedData(false, 0.0, listOf(), mapOf())
 
-        csvWriter().open("/home/lvuser/ShooterVelocity.csv", append = false) {
-            writeAll(enabledVelocities)
-        }
-        enabledVelocities.clear()
-        enabledVelocities.add(listOf("Time", "Velocity"))
+        // enabled = false tells the client to display graphs of the data sent by the server until now
+        sock.send(json.stringify(PublishedData.serializer(), data))
     }
 
     fun setDutyCycle(percent: Double) {

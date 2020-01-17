@@ -7,38 +7,17 @@ import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.shuffleboard.logging.tab
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.zeromq.SocketType
+import org.zeromq.ZContext
+import kotlin.concurrent.thread
 
 object Robot : SaturnRobot() {
 
     override fun robotInit() {
         +Flywheel
-
-        tab("Robot") {
-            list("Flywheel") {
-
-                size(4, 4)
-
-                textView("KF Error", { Flywheel.controller.velocity.value - Flywheel.velocity.value }) {
-                    size(2, 1)
-                    position(0, 0)
-                }
-
-                textView("Velocity", { Flywheel.velocity.value }) {
-                    size(2, 1)
-                    position(0, 3)
-                }
-
-                textView("Error (rad s^-1)", { 350 - Flywheel.controller.measuredVelocity.value }) {
-                    size(2, 1)
-                    position(0, 1)
-                }
-
-                textView("Voltage", { Flywheel.controller.voltage.value }) {
-                    size(2, 1)
-                    position(0, 2)
-                }
-            }
-        }
     }
 
     override fun autonomousInit() {
