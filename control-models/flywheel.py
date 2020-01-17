@@ -34,13 +34,15 @@ class Flywheel(fct.System):
 
     def create_model(self, states, inputs):
         # Number of motors
-        num_motors = 2.0
+        num_motors = 1.0
         # Flywheel moment of inertia in kg-m^2
-        J = 0.026
+        J = 0.00289
         # Gear ratio
-        G = 3.0
+        G = 1.0
 
-        return fct.models.flywheel(fct.models.MOTOR_775PRO, num_motors, J, G)
+        MOTOR_FALCON500 = fct.models.DcBrushedMotor(12.0, 4.69, 257.0, 1.5, 6380.0)
+
+        return fct.models.flywheel(MOTOR_FALCON500, num_motors, J, G)
 
     def design_controller_observer(self):
         q = [18.0]
@@ -49,34 +51,34 @@ class Flywheel(fct.System):
         # self.place_controller_poles([0.87])
         self.design_two_state_feedforward(q, r)
 
-        A_aug = np.concatenate(
-            (np.concatenate((self.sysd.A, self.sysd.B), axis=1),
-             np.concatenate((np.array([[0]]), np.array([[0]])), axis=1)),
-            axis=0
-        )
-
-        B_aug = np.concatenate(
-            (self.sysd.B, np.array([[0]])), axis=0
-        )
-        C_aug = np.concatenate((self.sysd.C, np.array([[0]])), axis=1)
-        D_aug = self.sysd.D
-        K_aug = np.concatenate((self.K, np.array([[1]])), axis=1)
-        Kff_aug = np.concatenate((self.Kff, np.array([[0]])), axis=1)
-
-        self.sysd.A = A_aug
-        self.sysd.B = B_aug
-        self.sysd.C = C_aug
-        self.sysd.D = D_aug
-        self.K = K_aug
-        self.Kff = Kff_aug
-        self.sysd.states = 2
-        self.x = np.zeros((2, 1))
-        self.r = np.zeros((2, 1))
-        self.x_hat = np.zeros((2, 1))
+        # A_aug = np.concatenate(
+        #     (np.concatenate((self.sysd.A, self.sysd.B), axis=1),
+        #      np.concatenate((np.array([[0]]), np.array([[0]])), axis=1)),
+        #     axis=0
+        # )
+        #
+        # B_aug = np.concatenate(
+        #     (self.sysd.B, np.array([[0]])), axis=0
+        # )
+        # C_aug = np.concatenate((self.sysd.C, np.array([[0]])), axis=1)
+        # D_aug = self.sysd.D
+        # K_aug = np.concatenate((self.K, np.array([[1]])), axis=1)
+        # Kff_aug = np.concatenate((self.Kff, np.array([[0]])), axis=1)
+        #
+        # self.sysd.A = A_aug
+        # self.sysd.B = B_aug
+        # self.sysd.C = C_aug
+        # self.sysd.D = D_aug
+        # self.K = K_aug
+        # self.Kff = Kff_aug
+        # self.sysd.states = 2
+        # self.x = np.zeros((2, 1))
+        # self.r = np.zeros((2, 1))
+        # self.x_hat = np.zeros((2, 1))
 
         q_vel = 0.75
         r_vel = 0.9
-        self.design_kalman_filter([q_vel, 0.0], [r_vel])
+        self.design_kalman_filter([q_vel], [r_vel])
         # self.place_observer_poles([0.3])
 
 
@@ -87,7 +89,7 @@ def main():
 
     # Set up graphing
     l0 = 0.1
-    l1 = l0 + 5.0
+    l1 = l0 + 10.0
     l2 = l1 + 0.1
     t = np.arange(0, l2 + 5.0, dt)
 
@@ -96,11 +98,11 @@ def main():
     # Generate references for simulation
     for i in range(len(t)):
         if t[i] < l0:
-            r = np.array([[0], [0]])
+            r = np.array([[0]])
         elif t[i] < l1:
-            r = np.array([[350.0], [0]])
+            r = np.array([[600.0]])
         else:
-            r = np.array([[0], [0]])
+            r = np.array([[0]])
         refs.append(r)
 
     x_rec, ref_rec, u_rec, y_rec = flywheel.generate_time_responses(t, refs)

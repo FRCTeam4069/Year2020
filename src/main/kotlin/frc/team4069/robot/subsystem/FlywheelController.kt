@@ -21,7 +21,7 @@ class FlywheelController {
 
     private var u = zeros(`1`)
 
-    private var ref = zeros(`2`)
+    private var ref = zeros(`1`)
     private var y = zeros(`1`)
 
     val velocity: SIUnit<AngularVelocity>
@@ -47,7 +47,7 @@ class FlywheelController {
 
         observer.correct(u, y)
 
-        controller.update(observer.xHat, ref)
+        controller.update(y, ref)
 
         observer.predict(u)
 
@@ -69,23 +69,23 @@ class FlywheelController {
 
 object FlywheelCoeffs {
     val plantCoeffs = StateSpacePlantCoeffs(
-        states = `2`,
+        states = `1`,
         inputs = `1`,
         outputs = `1`,
-        A = mat(`2`, `2`).fill(0.9975101382517066, 0.13636840996605396, 0.0, 0.0),
-        B = mat(`2`, `1`).fill(0.13636840996605396, 0.0),
-        C = mat(`1`, `2`).fill(1.0, 0.0),
+        A = mat(`1`, `1`).fill(0.9761411043943234),
+        B = mat(`1`, `1`).fill(1.33616658427706),
+        C = mat(`1`, `1`).fill(1.0),
         D = mat(`1`, `1`).fill(0.0)
     )
 
     val controllerCoeffs = StateSpaceControllerCoeffs(
-        K = mat(`1`, `2`).fill(0.6197793509559223, 1.0),
-        Kff = mat(`1`, `2`).fill(0.06011135933133584, 0.0),
+        K = mat(`1`, `1`).fill(0.4182113101478528),
+        Kff = mat(`1`, `1`).fill(0.3311161405219549),
         Umin = mat(`1`, `1`).fill(-12.0),
         Umax = mat(`1`, `1`).fill(12.0)
     )
 
     val observerCoeffs = StateSpaceObserverCoeffs(
-        K = mat(`2`, `1`).fill(0.5548749519247698, 0.0)
+        K = mat(`1`, `1`).fill(0.549066845378122)
     )
 }

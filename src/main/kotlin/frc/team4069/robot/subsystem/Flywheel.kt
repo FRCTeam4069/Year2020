@@ -2,6 +2,8 @@ package frc.team4069.robot.subsystem
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.InvertType
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.can.TalonFX
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
@@ -15,6 +17,7 @@ import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
 import frc.team4069.saturn.lib.util.launchFrequency
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import org.zeromq.SocketType
@@ -22,9 +25,7 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 object Flywheel : SaturnSubsystem() {
-    private val talon = TalonSRX(RobotMap.Flywheel.MASTER_TALON_ID)
-    private val slave = TalonSRX(RobotMap.Flywheel.SLAVE_TALON_ID)
-
+    private val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
     private val encoder =
         Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
 
@@ -48,8 +49,8 @@ object Flywheel : SaturnSubsystem() {
     }
 
     init {
-        slave.inverted = true
-        slave.follow(talon)
+        talon.inverted = true
+        talon.setNeutralMode(NeutralMode.Coast)
 
         encoder.samplesToAverage = 100
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
@@ -57,9 +58,9 @@ object Flywheel : SaturnSubsystem() {
         // Set up ZMQ context and bind a PUSH socket on 5802 (one of the team use ports)
         zmqContext = ZContext()
         sock = zmqContext.createSocket(SocketType.PUSH)
-        sock.bind("tcp://*:5802")
 
         val json = Json(JsonConfiguration.Stable)
+        sock.bind("tcp://*:5802")
         GlobalScope.launchFrequency(100.hertz) {
             val u = controller.update()
             if (controller.enabled) {
@@ -70,10 +71,13 @@ object Flywheel : SaturnSubsystem() {
                     true, now, mapOf(
                         "Voltage" to u.value, "Velocity" to velocity.value,
                         "KF Velocity" to controller.observer.xHat[0]
+//                        "U Error" to controller.observer.xHat[1]
                     )
                 )
+                println("Trying to send")
                 sock.send(json.stringify(PublishedData.serializer(), data))
 
+                println("Trying to set output voltage")
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
         }

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+print("fuck importing zmq")
 import zmq
 import matplotlib.pyplot as plt
 
@@ -7,10 +8,12 @@ import matplotlib.pyplot as plt
 t = []
 topics = {}
 
+print("Making ZMQ context")
 ctx = zmq.Context()
 sock = ctx.socket(zmq.PULL)
 sock.connect("tcp://10.40.69.2:5802")
 
+print("Socket connected.")
 while True:
     print("Loop")
     obj = sock.recv_json()
