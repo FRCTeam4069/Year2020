@@ -42,17 +42,31 @@ object Flywheel : SaturnSubsystem() {
         controller.reference = speed
     }
 
+    var zmqContext: ZContext? = null
+    var sock: ZMQ.Socket? = null
+
     init {
         talon.inverted = true
         talon.setNeutralMode(NeutralMode.Coast)
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
+        zmqContext = ZContext(2)
+        sock = zmqContext!!.createSocket(SocketType.PUSH)
+        sock!!.bind("tcp://*:5802")
+
+        val json = Json(JsonConfiguration.Stable)
         GlobalScope.launchFrequency(100.hertz) {
             controller.measuredVelocity = encoderVelocity
             val u = controller.update()
             if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
+
+                val data = PublishedData(true, now, mapOf(
+                    "Voltage" to u.value,
+                    "Velocity" to velocity.value
+                ))
+                sock?.send(json.stringify(PublishedData.serializer(), data))
 
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
@@ -60,8 +74,11 @@ object Flywheel : SaturnSubsystem() {
     }
 
     override fun setNeutral() {
-        controller.disable()
+        disable()
         talon.set(ControlMode.PercentOutput, 0.0)
+        val json = Json(JsonConfiguration.Stable)
+        val data = PublishedData(false, 0.0, mapOf())
+        sock?.send(json.stringify(PublishedData.serializer(), data))
     }
 
     fun setDutyCycle(percent: Double) {

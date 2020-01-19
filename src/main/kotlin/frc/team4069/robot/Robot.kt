@@ -24,7 +24,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
         println("init")
         Flywheel.enable()
-        Flywheel.setReference(100.radian.velocity)
+        Flywheel.setReference(150.radian.velocity)
     }
 
     override fun disabledInit() {
