@@ -1,6 +1,8 @@
 package frc.team4069.robot.subsystem
 
+import edu.wpi.first.wpilibj.LinearFilter
 import frc.team4069.keigen.*
+import frc.team4069.robot.map
 import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceController
 import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceObserver
 import frc.team4069.saturn.lib.mathematics.statespace.StateSpacePlant
@@ -16,6 +18,7 @@ class FlywheelController {
     val plant = StateSpacePlant(FlywheelCoeffs.plantCoeffs)
     val controller = StateSpaceController(FlywheelCoeffs.controllerCoeffs, plant)
     val observer = StateSpaceObserver(FlywheelCoeffs.observerCoeffs, plant)
+    val filter = LinearFilter.singlePoleIIR(0.5, 0.01) // TODO: Twiddle with timeConstant
 
     var enabled = false
 
@@ -43,12 +46,11 @@ class FlywheelController {
         get() = u[0].volt
 
     fun update(): SIUnit<Volt> {
-//        measuredVelocity = Flywheel.velocity
 
         observer.correct(u, y)
 
         controller.update(observer.xHat, ref)
-        this.u = controller.u
+        this.u = controller.u.map(filter::calculate) // Apply LPF to control inputs to improve controllability
 
         observer.predict(u)
 

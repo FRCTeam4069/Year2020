@@ -1,13 +1,12 @@
 package frc.team4069.robot.subsystem
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.MotorCommutation
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonFX
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.Timer
-import frc.team4069.keigen.*
+import frc.team4069.keigen.get
 import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
@@ -21,12 +20,11 @@ import kotlinx.serialization.json.JsonConfiguration
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
-import java.util.*
 
 object Flywheel : SaturnSubsystem() {
     private val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
     private val encoder =
-        Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true)
+        Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
 
     val controller = FlywheelController()
 
