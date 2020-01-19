@@ -47,10 +47,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
 
-    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
-    implementation "frc.team4069.saturn.lib:core:2020.1.1"
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:3aad1c9a82'
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:3aad1c9a82'
+//    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
+//    implementation "frc.team4069.saturn.lib:core:2020.1.1"
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:3aad1c9a82'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:3aad1c9a82'
     implementation "com.github.FRCTeam4069:Keigen:1.4.0"
     implementation 'org.zeromq:jeromq:0.5.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"

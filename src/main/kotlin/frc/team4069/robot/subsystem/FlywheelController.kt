@@ -43,15 +43,15 @@ class FlywheelController {
         get() = u[0].volt
 
     fun update(): SIUnit<Volt> {
-        measuredVelocity = Flywheel.velocity
+//        measuredVelocity = Flywheel.velocity
 
         observer.correct(u, y)
 
-        controller.update(y, ref)
+        controller.update(observer.xHat, ref)
+        this.u = controller.u
 
         observer.predict(u)
 
-        this.u = controller.u
 
         return if(enabled) {
             this.u[0].volt
@@ -72,20 +72,20 @@ object FlywheelCoeffs {
         states = `1`,
         inputs = `1`,
         outputs = `1`,
-        A = mat(`1`, `1`).fill(0.9761411043943234),
-        B = mat(`1`, `1`).fill(1.33616658427706),
+        A = mat(`1`, `1`).fill(0.9675557895260317),
+        B = mat(`1`, `1`).fill(1.3303056835711813),
         C = mat(`1`, `1`).fill(1.0),
         D = mat(`1`, `1`).fill(0.0)
     )
 
     val controllerCoeffs = StateSpaceControllerCoeffs(
-        K = mat(`1`, `1`).fill(0.4182113101478528),
-        Kff = mat(`1`, `1`).fill(0.3311161405219549),
+        K = mat(`1`, `1`).fill(0.41368559235626445),
+        Kff = mat(`1`, `1`).fill(0.75170693),
         Umin = mat(`1`, `1`).fill(-12.0),
         Umax = mat(`1`, `1`).fill(12.0)
     )
 
     val observerCoeffs = StateSpaceObserverCoeffs(
-        K = mat(`1`, `1`).fill(0.549066845378122)
+        K = mat(`1`, `1`).fill(0.795541093137215)
     )
 }

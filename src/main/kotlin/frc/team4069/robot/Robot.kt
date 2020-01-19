@@ -6,11 +6,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.subsystem.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
-import frc.team4069.saturn.lib.commands.SubsystemHandler
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.velocity
 
-object Robot : TimedRobot() {
+object Robot : SaturnRobot() {
 
     override fun robotInit() {
         println("Robot init start")
@@ -31,10 +30,8 @@ object Robot : TimedRobot() {
     override fun disabledInit() {
         CommandScheduler.getInstance().cancelAll()
     }
-
-    private operator fun SaturnSubsystem.unaryPlus() = SubsystemHandler.add(this)
 }
 
 fun main() {
-    RobotBase.startRobot { Robot }
+    Robot.start()
 }

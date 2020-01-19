@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-print("fuck importing zmq")
 import zmq
 import matplotlib.pyplot as plt
 
@@ -30,8 +29,14 @@ while True:
         if t is not []:
             print("Should display graphs")
             for (name, topic) in topics.items():
+                ref = []
+                if "Velocity" in name:
+                    ref = [100 for _x in topic]
                 plt.figure()
                 plt.plot(t, topic, label=name)
+                if ref:
+                    plt.plot(t, ref, label="Reference")
+
                 plt.xlabel("Time")
                 plt.ylabel(name)
                 plt.legend()
