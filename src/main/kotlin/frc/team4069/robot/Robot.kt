@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.subsystem.Flywheel
+import frc.team4069.robot.subsystem.TowerOfDoom
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
+import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.TAU
 import frc.team4069.saturn.lib.mathematics.units.Unitless
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
@@ -13,29 +15,35 @@ import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitRotationM
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STU
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.velocity
-import frc.team4069.saturn.lib.motor.ctre.SaturnCTREEncoder
-import frc.team4069.saturn.lib.motor.ctre.SaturnFX
 
 object Robot : SaturnRobot() {
 
+    private val controls = mutableListOf<SaturnHID<*>>()
+
     override fun robotInit() {
-        println("Robot init start")
         +Flywheel
-        println("Robot init done")
+        +TowerOfDoom
+        +OI.controller
     }
 
     override fun teleopInit() {
-        println("teleop")
+        Flywheel.enable()
+    }
+
+    override fun robotPeriodic() {
+        controls.forEach(SaturnHID<*>::update)
     }
 
     override fun autonomousInit() {
-        println("init")
         Flywheel.enable()
-        Flywheel.setReference(150.radian.velocity)
     }
 
     override fun disabledInit() {
         CommandScheduler.getInstance().cancelAll()
+    }
+
+    operator fun SaturnHID<*>.unaryPlus() {
+        controls += this
     }
 }
 

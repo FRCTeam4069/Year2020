@@ -31,7 +31,7 @@ while True:
             for (name, topic) in topics.items():
                 ref = []
                 if "Velocity" in name:
-                    ref = [150 for _x in topic]
+                    ref = [350 for _x in topic]
                 plt.figure()
                 plt.plot(t, topic, label=name)
                 if ref:

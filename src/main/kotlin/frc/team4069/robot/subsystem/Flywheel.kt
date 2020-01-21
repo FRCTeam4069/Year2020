@@ -2,6 +2,7 @@ package frc.team4069.robot.subsystem
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration
 import com.ctre.phoenix.motorcontrol.can.TalonFX
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
@@ -28,6 +29,8 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
+    val TEST_SHOOTING_PRESET = 350.radian.velocity
+
     fun enable() {
         controller.enable()
     }
@@ -46,6 +49,7 @@ object Flywheel : SaturnSubsystem() {
     init {
         talon.inverted = true
         talon.setNeutralMode(NeutralMode.Coast)
+        talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
@@ -62,7 +66,8 @@ object Flywheel : SaturnSubsystem() {
 
                 val data = PublishedData(true, now, mapOf(
                     "Voltage" to u.value,
-                    "Velocity" to velocity.value
+                    "Velocity" to velocity.value,
+                    "U error" to controller.observer.xHat[1]
                 ))
                 sock?.send(json.stringify(PublishedData.serializer(), data))
 
