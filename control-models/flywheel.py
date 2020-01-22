@@ -106,7 +106,7 @@ def main():
         if t[i] < l0:
             r = np.array([[0], [0]])
         elif t[i] < l1:
-            r = np.array([[350.0], [0]])
+            r = np.array([[1000.0], [0]])
         else:
             r = np.array([[0], [0]])
         refs.append(r)

@@ -69,7 +69,7 @@ object Flywheel : SaturnSubsystem() {
                     "Velocity" to velocity.value,
                     "U error" to controller.observer.xHat[1]
                 ))
-//                sock?.send(json.stringify(PublishedData.serializer(), data))
+                sock?.send(json.stringify(PublishedData.serializer(), data))
 
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
@@ -81,7 +81,7 @@ object Flywheel : SaturnSubsystem() {
         talon.set(ControlMode.PercentOutput, 0.0)
         val json = Json(JsonConfiguration.Stable)
         val data = PublishedData(false, 0.0, mapOf())
-//        sock?.send(json.stringify(PublishedData.serializer(), data))
+        sock?.send(json.stringify(PublishedData.serializer(), data))
     }
 
     fun setDutyCycle(percent: Double) {

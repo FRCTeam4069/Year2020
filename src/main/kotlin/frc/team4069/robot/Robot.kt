@@ -30,7 +30,7 @@ object Robot : SaturnRobot() {
 
     override fun teleopInit() {
         Flywheel.enable()
-        Hood.setPosition(0.75)
+        Hood.setPosition(1.0)
     }
 
     override fun robotPeriodic() {

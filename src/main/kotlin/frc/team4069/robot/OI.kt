@@ -1,6 +1,7 @@
 package frc.team4069.robot
 
 import frc.team4069.robot.subsystem.Flywheel
+import frc.team4069.robot.subsystem.Hood
 import frc.team4069.robot.subsystem.TowerOfDoom
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
@@ -19,6 +20,18 @@ object OI {
                     set = false
                     Flywheel.setReference(0.radian.velocity)
                 }
+            }
+        }
+
+        button(kBumperLeft) {
+            changeOn {
+                Hood.setPosition(0.0)
+            }
+        }
+
+        button(kBumperRight) {
+            changeOn {
+                Hood.setPosition(1.0)
             }
         }
 

@@ -1,10 +1,6 @@
 package frc.team4069.robot.subsystem
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
-import frc.team4069.saturn.lib.mathematics.units.SIUnit
-import frc.team4069.saturn.lib.mathematics.units.Unitless
 import frc.team4069.saturn.lib.mathematics.units.conversions.degree
 import frc.team4069.saturn.lib.mathematics.units.degree
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitRotationModel
@@ -20,7 +16,7 @@ object Hood : SaturnSubsystem() {
     init {
         talon.talon.apply {
             configPeakOutputForward(0.3)
-            configPeakOutputReverse(0.3)
+            configPeakOutputReverse(-0.3)
             config_kP(0, 1.0)
             config_kI(0, 0.001)
             config_kD(0, 0.0)
