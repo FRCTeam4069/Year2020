@@ -23,13 +23,14 @@ object Robot : SaturnRobot() {
 
     override fun robotInit() {
         +Flywheel
-//        +TowerOfDoom
+        +TowerOfDoom
         +Hood
-//        +OI.controller
+        +OI.controller
     }
 
     override fun teleopInit() {
         Flywheel.enable()
+        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
@@ -41,7 +42,6 @@ object Robot : SaturnRobot() {
     }
 
     override fun autonomousPeriodic() {
-        Hood.setPosition(0.5)
     }
 
     override fun disabledInit() {
