@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.subsystem.Flywheel
+import frc.team4069.robot.subsystem.Hood
 import frc.team4069.robot.subsystem.TowerOfDoom
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
@@ -22,8 +23,9 @@ object Robot : SaturnRobot() {
 
     override fun robotInit() {
         +Flywheel
-        +TowerOfDoom
-        +OI.controller
+//        +TowerOfDoom
+        +Hood
+//        +OI.controller
     }
 
     override fun teleopInit() {
@@ -35,7 +37,11 @@ object Robot : SaturnRobot() {
     }
 
     override fun autonomousInit() {
-        Flywheel.enable()
+        // Flywheel.enable()
+    }
+
+    override fun autonomousPeriodic() {
+        Hood.setPosition(0.5)
     }
 
     override fun disabledInit() {
