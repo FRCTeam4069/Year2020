@@ -33,7 +33,7 @@ class Flywheel(fct.System):
 
     def create_model(self, states, inputs):
         # Number of motors
-        num_motors = 1.0
+        num_motors = 2.0
         # Flywheel moment of inertia in kg-m^2
         J = 0.00289
         # Gear ratio
