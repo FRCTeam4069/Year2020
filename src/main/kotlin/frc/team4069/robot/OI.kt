@@ -1,11 +1,13 @@
 package frc.team4069.robot
 
-import frc.team4069.robot.subsystem.Flywheel
-import frc.team4069.robot.subsystem.Hood
-import frc.team4069.robot.subsystem.TowerOfDoom
+import edu.wpi.first.wpilibj.GenericHID
+import frc.team4069.robot.subsystems.flywheel.Flywheel
+import frc.team4069.robot.subsystems.Hood
+import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.velocity
+import frc.team4069.saturn.lib.util.deadband
 
 object OI {
     val controller = xboxController(0) {
@@ -55,4 +57,10 @@ object OI {
             }
         }
     }
+
+    val driveSpeed: Double
+        get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft)).deadband(0.2)
+
+    val driveTurn: Double
+        get() = controller.getX(GenericHID.Hand.kLeft).deadband(0.2)
 }

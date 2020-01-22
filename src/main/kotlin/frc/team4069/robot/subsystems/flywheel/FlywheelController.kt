@@ -1,4 +1,4 @@
-package frc.team4069.robot.subsystem
+package frc.team4069.robot.subsystems.flywheel
 
 import edu.wpi.first.wpilibj.LinearFilter
 import edu.wpi.first.wpilibj.MedianFilter
@@ -21,12 +21,8 @@ class FlywheelController {
     val plant = StateSpacePlant(FlywheelCoeffs.plantCoeffs)
     val controller = StateSpaceController(FlywheelCoeffs.controllerCoeffs, plant)
     val observer = StateSpaceObserver(FlywheelCoeffs.observerCoeffs, plant)
-    var filter = LinearFilter.singlePoleIIR(0.2, 0.01) // TODO: Twiddle with timeConstant
-    // TC=0.1 worked for 150rad/s
 
     val tolerance = 20 // rad/s
-
-    var lastVelocity = -1.0
 
     var enabled = false
 

@@ -1,4 +1,4 @@
-package frc.team4069.robot.subsystem
+package frc.team4069.robot.subsystems
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
@@ -9,22 +9,17 @@ import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.Second
 import frc.team4069.saturn.lib.mathematics.units.conversions.second
 import frc.team4069.saturn.lib.mathematics.units.derived.Hertz
-import frc.team4069.saturn.lib.mathematics.units.hertz
 import frc.team4069.saturn.lib.mathematics.units.second
 import frc.team4069.saturn.lib.util.DeltaTime
-import frc.team4069.saturn.lib.util.launchFrequency
 import frc.team4069.saturn.lib.util.loopFrequency
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.ActorScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.absoluteValue
 import kotlin.math.sin
 
 @UseExperimental(ObsoleteCoroutinesApi::class)

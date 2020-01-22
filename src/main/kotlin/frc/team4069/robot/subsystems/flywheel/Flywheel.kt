@@ -1,4 +1,4 @@
-package frc.team4069.robot.subsystem
+package frc.team4069.robot.subsystems.flywheel
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer
 import frc.team4069.keigen.get
 import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
+import frc.team4069.robot.subsystems.flywheel.FlywheelController
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.mathematics.TAU
 import frc.team4069.saturn.lib.mathematics.units.*
@@ -29,7 +30,7 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
-    val TEST_SHOOTING_PRESET = 350.radian.velocity
+    val TEST_SHOOTING_PRESET = 200.radian.velocity
 
     fun enable() {
         controller.enable()
@@ -53,9 +54,9 @@ object Flywheel : SaturnSubsystem() {
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
-        zmqContext = ZContext(2)
-        sock = zmqContext!!.createSocket(SocketType.PUSH)
-        sock!!.bind("tcp://*:5802")
+//        zmqContext = ZContext(2)
+//        sock = zmqContext!!.createSocket(SocketType.PUSH)
+//        sock!!.bind("tcp://*:5802")
 
         val json = Json(JsonConfiguration.Stable)
         GlobalScope.launchFrequency(100.hertz) {

@@ -1,27 +1,20 @@
 package frc.team4069.robot
 
-import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.team4069.robot.subsystem.Flywheel
-import frc.team4069.robot.subsystem.Hood
-import frc.team4069.robot.subsystem.TowerOfDoom
+import frc.team4069.robot.commands.OperatorDriveCommand
+import frc.team4069.robot.subsystems.Drivetrain
+import frc.team4069.robot.subsystems.Hood
+import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
-import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.hid.SaturnHID
-import frc.team4069.saturn.lib.mathematics.TAU
-import frc.team4069.saturn.lib.mathematics.units.Unitless
-import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitRotationModel
-import frc.team4069.saturn.lib.mathematics.units.nativeunits.STU
-import frc.team4069.saturn.lib.mathematics.units.radian
-import frc.team4069.saturn.lib.mathematics.units.velocity
 
 object Robot : SaturnRobot() {
 
     private val controls = mutableListOf<SaturnHID<*>>()
 
     override fun robotInit() {
+        +Drivetrain
         +Flywheel
         +TowerOfDoom
         +Hood
@@ -30,7 +23,7 @@ object Robot : SaturnRobot() {
 
     override fun teleopInit() {
         Flywheel.enable()
-        Hood.setPosition(1.0)
+        OperatorDriveCommand().schedule()
     }
 
     override fun robotPeriodic() {

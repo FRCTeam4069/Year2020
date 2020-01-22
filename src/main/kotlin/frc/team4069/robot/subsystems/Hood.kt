@@ -1,5 +1,6 @@
-package frc.team4069.robot.subsystem
+package frc.team4069.robot.subsystems
 
+import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.mathematics.units.conversions.degree
 import frc.team4069.saturn.lib.mathematics.units.degree
@@ -9,7 +10,7 @@ import frc.team4069.saturn.lib.motor.ctre.SaturnSRX
 
 object Hood : SaturnSubsystem() {
 
-    private val talon = SaturnSRX(2, NativeUnitRotationModel(4096.STU))
+    private val talon = SaturnSRX(RobotMap.Hood.TALON_ID, NativeUnitRotationModel(4096.STU))
     private val encoder = talon.encoder
     private val maxPos = 45.degree * 2.33
 
@@ -28,7 +29,6 @@ object Hood : SaturnSubsystem() {
     fun setPosition(position: Double) {
         val setpoint = maxPos * position
         talon.setPosition(setpoint)
-//        talon.set(ControlMode.PercentOutput, 0.1)
         println(encoder.position.degree / 2.33)
     }
 
