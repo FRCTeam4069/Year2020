@@ -1,0 +1,60 @@
+{
+    "fileName": "wpilibStateSpace.json",
+    "name": "wpilibStateSpace",
+    "version": "    020.2.1",
+    "uuid": "libcufrc-e6e8-4db6-89f0-copperforge0", 
+    "mavenUrls": [
+        "https://morley3dprinting.com/dev/files/maven",
+        "/home/kaitlyn/.m2/repository"
+    ],
+    "jsonUrl": "https://morley3dprinting.com/dev/files/vendordeps/wpilibStateSpace-latest.json",
+    "cppDependencies": [
+        {
+            "groupId": "edu.wpi.first.wpilibStateSpace",
+            "artifactId": "WPILibStateSpace-cpp",
+            "version": "2020.2.1",
+            "libName": "wpilibStateSpace",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxathena"
+            ]
+        },
+        {
+            "groupId": "edu.wpi.first.wpilibStateSpace",
+            "artifactId": "wpilibStateSpace-driver",
+            "version": "2020.2.1",
+            "libName": "CuDriver",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxathena"
+            ]
+        }
+    ],
+    "javaDependencies": [
+        {
+            "groupId": "edu.wpi.first.wpilibStateSpace",
+            "artifactId": "WPILibStateSpace-java",
+            "version": "2020.2.1"
+        }
+    ],
+    "jniDependencies": [
+        {
+            "groupId": "edu.wpi.first.wpilibStateSpace",
+            "artifactId": "WPILibStateSpace-driver",
+            "version": "2020.2.1",
+            "isJar": false,
+            "skipInvalidPlatforms": true,
+            "validPlatforms": [
+                "windowsx86-64",
+                "linuxathena"
+            ]
+        }
+    ]
+}
+

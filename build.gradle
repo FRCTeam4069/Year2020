@@ -53,7 +53,6 @@ dependencies {
 //    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:e0b770f11f'
     implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorCTRE:e0b770f11f'
     implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorREV:e0b770f11f'
-    implementation "com.github.FRCTeam4069:Keigen:1.4.0"
     implementation 'org.zeromq:jeromq:0.5.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 }

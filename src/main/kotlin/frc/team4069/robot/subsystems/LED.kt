@@ -2,7 +2,6 @@ package frc.team4069.robot.subsystems
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
-import edu.wpi.first.wpilibj.Spark
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
@@ -28,59 +27,79 @@ object LED {
     const val LED_PWM_PORT = 1
     const val LED_STRIP_LENGTH = 10
 
-    private val leds = AddressableLED(LED_PWM_PORT)
-
-    init {
-        leds.setLength(LED_STRIP_LENGTH)
-    }
 
     /**
      * Coroutine that controls demands related to the brightness of the LEDs
      *
      * Messages can be posted through [updateBrightness] to change the behaviour
      */
-    private val brightnessActor = GlobalScope.actor<BrightnessDemand> {
+    private val ledControlActor =  GlobalScope.actor<LedDemand> {
         var childJob: Job? = null
-        val ledPwr = Spark(0)
+
+        val leds = AddressableLED(LED_PWM_PORT)
+        leds.setLength(LED_STRIP_LENGTH)
+        leds.start()
+
+        var demandBuffer: AddressableLEDBuffer
 
         for(msg in channel) {
             childJob?.cancel()
             childJob = null
             when(msg) {
-                BrightnessDemand.On -> {
-                    ledPwr.set(1.0)
+                is LedDemand.On -> {
+                    demandBuffer = msg.colours.toBuffer()
+                    leds.setData(demandBuffer)
                 }
-                BrightnessDemand.Off -> {
-                    ledPwr.set(0.0)
+                LedDemand.Off -> {
+                    val l = mutableListOf<Color>()
+                    repeat(LED_STRIP_LENGTH) {
+                        l += Color(0.0, 0.0, 0.0)
+                    }
+                    demandBuffer = l.toBuffer()
+                    leds.setData(demandBuffer)
                 }
-                is BrightnessDemand.Sinusoidal -> {
-                    ledPwr.set(0.0)
+                is LedDemand.Sinusoidal -> {
+                    val init = msg.colours.map { Color(0.0, 0.0, 0.0) }
+                    demandBuffer = init.toBuffer()
+                    leds.setData(demandBuffer)
+
                     childJob = launch {
+                        val base = msg.colours
+                        val freq = msg.frequency.value
+                        val dt = 0.02
                         var t = 0.0
-                        val sinFreq = msg.frequency.value
-                        val deltaTime = DeltaTime()
-                        loopFrequency(100) {
-                            val dt = deltaTime.updateTime(Timer.getFPGATimestamp().second).second
+
+                        loopFrequency(50) {
                             t += dt
-                            val output = (sin(PI * sinFreq * t) + 1) / 2.0
-                            ledPwr.set(output)
+                            val scale = (sin(PI*freq*t) + 1.0) / 2.0
+                            demandBuffer = base.map { Color(it.red * scale, it.green * scale, it.blue * scale) }.toBuffer()
+                            leds.setData(demandBuffer)
                         }
                     }
                 }
-                is BrightnessDemand.Square -> {
-                    ledPwr.set(0.0)
+                is LedDemand.Square -> {
                     childJob = launch {
+                        val nullBuf = msg.colours.map { Color(0.0, 0.0, 0.0) }.toBuffer()
+                        val colours = msg.colours.toBuffer()
+                        val dt = 0.02
                         var elapsed = 0.0
-                        val desired = msg.peakTime.value
-                        val deltaTime = DeltaTime()
+                        val peakTime = msg.peakTime.value
                         var on = false
-                        loopFrequency(100) {
-                            val dt = deltaTime.updateTime(Timer.getFPGATimestamp().second).second
+                        leds.setData(nullBuf)
+
+                        loopFrequency(50) {
                             elapsed += dt
-                            if(elapsed >= desired) {
-                                on = !on
+                            if(elapsed >= peakTime) {
+                                if(on) {
+                                    on = false
+                                    leds.stop()
+                                } else {
+                                    on = true
+                                    leds.start()
+                                    leds.setData(colours)
+                                }
+
                                 elapsed = 0.0
-                                ledPwr.set(if(on) 1.0 else 0.0)
                             }
                         }
                     }
@@ -89,30 +108,30 @@ object LED {
         }
     }
 
-    fun updateBrightness(demand: BrightnessDemand) {
-        brightnessActor.sendBlocking(demand)
+    fun updateDemand(demand: LedDemand) {
+        ledControlActor.sendBlocking(demand)
     }
 
-    fun updateColours(colours: List<Color>) {
-        if(colours.size < LED_STRIP_LENGTH) {
-            throw IllegalArgumentException("Colours list must be $LED_STRIP_LENGTH entries long.")
+    fun List<Color>.toBuffer(): AddressableLEDBuffer {
+        if(this.size < LED_STRIP_LENGTH) {
+            throw IllegalArgumentException("List must be at least $LED_STRIP_LENGTH elements long.")
         }
 
-        val buf = AddressableLEDBuffer(LED_STRIP_LENGTH)
+        val buffer = AddressableLEDBuffer(LED_STRIP_LENGTH)
 
         for(i in 0 until LED_STRIP_LENGTH) {
-            buf.setLED(i, colours[i])
+            buffer.setLED(i, this[i])
         }
 
-        leds.setData(buf)
+        return buffer
     }
 
-    sealed class BrightnessDemand {
-        object On : BrightnessDemand()
-        object Off : BrightnessDemand()
+    sealed class LedDemand {
+        data class On(val colours: List<Color>) : LedDemand()
+        object Off : LedDemand()
 
         // Based on output = |sin(pi*f*t)|
-        data class Sinusoidal(val frequency: SIUnit<Hertz>) : BrightnessDemand() {
+        data class Sinusoidal(val frequency: SIUnit<Hertz>, val colours: List<Color>) : LedDemand() {
             init {
                 if(frequency.value <= 0.0) {
                     throw IllegalArgumentException("Frequency must be strictly positive")
@@ -121,7 +140,7 @@ object LED {
         }
 
         // Cycles 0-1, with flat parts lastting [peakTime]
-        data class Square(val peakTime: SIUnit<Second>) : BrightnessDemand()
+        data class Square(val peakTime: SIUnit<Second>, val colours: List<Color>) : LedDemand()
     }
 }
 

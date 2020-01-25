@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.Timer
-import frc.team4069.keigen.get
 import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
 import frc.team4069.robot.subsystems.flywheel.FlywheelController
@@ -15,6 +14,7 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import frc.team4069.saturn.lib.mathematics.TAU
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
+import frc.team4069.saturn.lib.util.DeltaTime
 import frc.team4069.saturn.lib.util.launchFrequency
 import kotlinx.coroutines.GlobalScope
 import kotlinx.serialization.json.Json
@@ -59,16 +59,17 @@ object Flywheel : SaturnSubsystem() {
 //        sock!!.bind("tcp://*:5802")
 
         val json = Json(JsonConfiguration.Stable)
+        val delta = DeltaTime()
         GlobalScope.launchFrequency(100.hertz) {
             controller.measuredVelocity = encoderVelocity
-            val u = controller.update()
+            val dt = delta.updateTime(Timer.getFPGATimestamp().second)
+            val u = controller.update(dt)
             if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
 
                 val data = PublishedData(true, now, mapOf(
                     "Voltage" to u.value,
-                    "Velocity" to velocity.value,
-                    "U error" to controller.observer.xHat[1]
+                    "Velocity" to velocity.value
                 ))
                 sock?.send(json.stringify(PublishedData.serializer(), data))
 
@@ -101,5 +102,5 @@ object Flywheel : SaturnSubsystem() {
      * The rotational velocity of the shooter as estimated by the KF
      */
     val velocity: SIUnit<AngularVelocity>
-        get() = controller.observer.xHat[0].radian.velocity
+        get() = controller.velocity
 }

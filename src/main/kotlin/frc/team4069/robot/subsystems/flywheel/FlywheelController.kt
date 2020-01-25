@@ -1,26 +1,48 @@
 package frc.team4069.robot.subsystems.flywheel
 
-import edu.wpi.first.wpilibj.LinearFilter
-import edu.wpi.first.wpilibj.MedianFilter
-import edu.wpi.first.wpilibj.Timer
-import frc.team4069.keigen.*
-import frc.team4069.robot.map
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceController
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceObserver
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpacePlant
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceControllerCoeffs
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceObserverCoeffs
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpacePlantCoeffs
+import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator
+import edu.wpi.first.wpilibj.estimator.KalmanFilter
+import edu.wpi.first.wpilibj.system.LinearSystem
+import edu.wpi.first.wpiutil.math.numbers.N1
+import frc.team4069.saturn.lib.mathematics.*
+import frc.team4069.saturn.lib.mathematics.model.gearbox
+import frc.team4069.saturn.lib.mathematics.model.kMotorFalcon500
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
-import frc.team4069.saturn.lib.mathematics.units.derived.Velocity
 import frc.team4069.saturn.lib.mathematics.units.derived.Volt
-import kotlin.math.absoluteValue
+import kotlin.math.pow
 
 class FlywheelController {
-    val plant = StateSpacePlant(FlywheelCoeffs.plantCoeffs)
-    val controller = StateSpaceController(FlywheelCoeffs.controllerCoeffs, plant)
-    val observer = StateSpaceObserver(FlywheelCoeffs.observerCoeffs, plant)
+    val plant = LinearSystem<N1, N1, N1>(
+        `1`,
+        `1`,
+        `1`,
+        FlywheelCoeffs.Ac,
+        FlywheelCoeffs.Bc,
+        FlywheelCoeffs.Cc,
+        FlywheelCoeffs.Dc,
+        FlywheelCoeffs.Umin,
+        FlywheelCoeffs.Umax
+    )
+
+    val controller = LinearQuadraticRegulator<N1, N1, N1>(
+        `1`,
+        `1`,
+        plant,
+        vec(`1`).fill(50.0),  // Qelms
+        vec(`1`).fill(12.0),  // Relms
+        0.01
+    )
+
+    val observer = KalmanFilter<N1, N1, N1>(
+        `1`,
+        `1`,
+        `1`,
+        plant,
+        vec(`1`).fill(0.05),  // Model stddev
+        vec(`1`).fill(7.5),   // Measurement stddev
+        0.01
+    )
 
     val tolerance = 20 // rad/s
 
@@ -28,11 +50,11 @@ class FlywheelController {
 
     private var u = zeros(`1`)
 
-    private var ref = zeros(`2`)
+    private var ref = zeros(`1`)
     private var y = zeros(`1`)
 
     val velocity: SIUnit<AngularVelocity>
-        get() = observer.xHat[0].radian.velocity
+        get() = observer.xhat[0].radian.velocity
 
     var measuredVelocity: SIUnit<AngularVelocity>
         get() = y[0].radian.velocity
@@ -49,15 +71,15 @@ class FlywheelController {
     val voltage: SIUnit<Volt>
         get() = u[0].volt
 
-    fun update(): SIUnit<Volt> {
+    fun update(dt: SIUnit<Second>): SIUnit<Volt> {
 
         observer.correct(u, y)
 
-        controller.update(observer.xHat, ref)
+        controller.update(observer.xhat, ref)
 
         this.u = controller.u
 
-        observer.predict(u)
+        observer.predict(u, dt.value)
 
         return if (enabled) {
             this.u[0].volt
@@ -74,24 +96,18 @@ class FlywheelController {
 }
 
 object FlywheelCoeffs {
-    val plantCoeffs = StateSpacePlantCoeffs(
-        states = `2`,
-        inputs = `1`,
-        outputs = `1`,
-        A = mat(`2`, `2`).fill(0.9675557895260317, 1.3303056835711813, 0.0, 0.0),
-        B = mat(`2`, `1`).fill(1.3303056835711813, 0.0),
-        C = mat(`1`, `2`).fill(1.0, 0.0),
-        D = mat(`1`, `1`).fill(0.0)
-    )
+    val G = 1.0
+    val numMotors = 2
+    val J = 0.00289 // kgm2
+    val motor = gearbox(kMotorFalcon500.copy(freeSpeed = 4671.rpm), numMotors)
 
-    val controllerCoeffs = StateSpaceControllerCoeffs(
-        K = mat(`1`, `2`).fill(0.18409390097067566, 1.0),
-        Kff = mat(`1`, `2`).fill(0.75170693, 0.0),
-        Umin = mat(`1`, `1`).fill(0.0),
-        Umax = mat(`1`, `1`).fill(12.0)
-    )
+    // https://file.tavsys.net/control/controls-engineering-in-frc.pdf theorem 7.3.1
+    // All of these matrices are continuous, wpilib classes discretize them
+    val Ac = mat(`1`, `1`).fill((-1 * G.pow(2) * motor.Kt.value) / (motor.Kv.value * motor.R.value * J))
+    val Bc = mat(`1`, `1`).fill((G * motor.Kt.value) / (motor.R.value * J))
+    val Cc = mat(`1`, `1`).fill(1.0)
+    val Dc = mat(`1`, `1`).fill(0.0)
 
-    val observerCoeffs = StateSpaceObserverCoeffs(
-        K = mat(`2`, `1`).fill(0.795541093137215, 1.6517591872016555e-16)
-    )
+    val Umin = vec(`1`).fill(0.0)
+    val Umax = vec(`1`).fill(12.0)
 }
