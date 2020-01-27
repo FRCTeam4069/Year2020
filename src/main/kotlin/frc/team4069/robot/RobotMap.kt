@@ -3,17 +3,18 @@ package frc.team4069.robot
 object RobotMap {
     object Flywheel {
         const val MASTER_TALON_ID = 10
+        const val SLAVE_TALON_ID = 11
 
         const val ENCODER_A = 0
         const val ENCODER_B = 1
     }
 
     object Tower {
-        const val TALON_ID = 12
+        const val TALON_ID = 13
     }
 
     object Hood {
-        const val TALON_ID = 11
+        const val TALON_ID = 12
     }
     
     object Drivetrain {

@@ -1,6 +1,7 @@
 package frc.team4069.robot.subsystems.flywheel
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.InvertType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration
 import com.ctre.phoenix.motorcontrol.can.TalonFX
@@ -11,7 +12,7 @@ import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
 import frc.team4069.robot.subsystems.flywheel.FlywheelController
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
-import frc.team4069.saturn.lib.mathematics.TAU
+import frc.team4069.saturn.lib.mathematics.*
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
 import frc.team4069.saturn.lib.util.DeltaTime
@@ -22,9 +23,12 @@ import kotlinx.serialization.json.JsonConfiguration
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
+import java.util.*
 
 object Flywheel : SaturnSubsystem() {
     private val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
+    private val slave = TalonFX(RobotMap.Flywheel.SLAVE_TALON_ID)
+
     private val encoder =
         Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
 
@@ -50,7 +54,11 @@ object Flywheel : SaturnSubsystem() {
     init {
         talon.inverted = true
         talon.setNeutralMode(NeutralMode.Coast)
+        slave.follow(talon)
+        slave.setInverted(InvertType.OpposeMaster)
+        slave.setNeutralMode(NeutralMode.Coast)
         talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
+        slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
@@ -60,16 +68,22 @@ object Flywheel : SaturnSubsystem() {
 
         val json = Json(JsonConfiguration.Stable)
         val delta = DeltaTime()
+        val rand = Random()
+        val R = 0.016.ohm
         GlobalScope.launchFrequency(100.hertz) {
-            controller.measuredVelocity = encoderVelocity
+            controller.measuredVelocity = (controller.plant.getX(0) + rand.nextGaussian() * 7.5).radian.velocity
             val dt = delta.updateTime(Timer.getFPGATimestamp().second)
             val u = controller.update(dt)
             if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
 
+                val scale = (12.volt - R * talon.supplyCurrent.amp * 2.0) / 12.volt
+                val plantU = u * scale
+                controller.plant.update(controller.plant.x, mat(`1`, `1`).fill(plantU.value), dt.value)
+
                 val data = PublishedData(true, now, mapOf(
                     "Voltage" to u.value,
-                    "Velocity" to velocity.value
+                    "Velocity" to encoderVelocity.value
                 ))
                 sock?.send(json.stringify(PublishedData.serializer(), data))
 
@@ -101,6 +115,6 @@ object Flywheel : SaturnSubsystem() {
     /**
      * The rotational velocity of the shooter as estimated by the KF
      */
-    val velocity: SIUnit<AngularVelocity>
-        get() = controller.velocity
+//    val velocity: SIUnit<AngularVelocity>
+//        get() = controller.velocity
 }

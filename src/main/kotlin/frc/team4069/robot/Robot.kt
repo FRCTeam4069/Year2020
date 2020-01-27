@@ -8,6 +8,8 @@ import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
+import frc.team4069.saturn.lib.mathematics.units.radian
+import frc.team4069.saturn.lib.mathematics.units.velocity
 
 object Robot : SaturnRobot() {
 
@@ -22,8 +24,9 @@ object Robot : SaturnRobot() {
     }
 
     override fun teleopInit() {
-        Flywheel.enable()
+//        Flywheel.enable()
         OperatorDriveCommand().schedule()
+        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
@@ -31,7 +34,8 @@ object Robot : SaturnRobot() {
     }
 
     override fun autonomousInit() {
-        // Flywheel.enable()
+//        Flywheel.enable()
+        Flywheel.setDutyCycle(0.5)
     }
 
     override fun autonomousPeriodic() {
