@@ -1,5 +1,7 @@
 package frc.team4069.robot
 
+import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.commands.OperatorDriveCommand
 import frc.team4069.robot.subsystems.Drivetrain
@@ -9,7 +11,9 @@ import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.units.radian
+import frc.team4069.saturn.lib.mathematics.units.second
 import frc.team4069.saturn.lib.mathematics.units.velocity
+import frc.team4069.saturn.lib.util.DeltaTime
 
 object Robot : SaturnRobot() {
 
@@ -26,7 +30,7 @@ object Robot : SaturnRobot() {
     override fun teleopInit() {
 //        Flywheel.enable()
         OperatorDriveCommand().schedule()
-        Hood.setPosition(0.75)
+//        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
@@ -34,8 +38,8 @@ object Robot : SaturnRobot() {
     }
 
     override fun autonomousInit() {
-//        Flywheel.enable()
-        Flywheel.setDutyCycle(0.5)
+        Flywheel.enable()
+        Flywheel.setReference(150.radian.velocity)
     }
 
     override fun autonomousPeriodic() {

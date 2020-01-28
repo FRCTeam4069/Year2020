@@ -18,11 +18,12 @@ object OI {
                 if(!set) {
                     set = true
 //                    Flywheel.setReference(Flywheel.TEST_SHOOTING_PRESET)
-                    Flywheel.setDutyCycle(0.8)
+//                    Flywheel.setReference(400.radian.velocity)
+                    Flywheel.setDutyCycle(0.9)
                 }else {
                     set = false
-//                    Flywheel.setReference(0.radian.velocity)
                     Flywheel.setDutyCycle(0.0)
+//                    Flywheel.setReference(0.radian.velocity)
                 }
             }
         }

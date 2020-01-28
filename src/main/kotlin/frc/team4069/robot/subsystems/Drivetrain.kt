@@ -94,7 +94,7 @@ object Drivetrain : TankDriveSubsystem() {
         leftSlave.follow(leftMotor)
 
         leftMotor.canSparkMax.setSecondaryCurrentLimit(50.0)
-        leftMotor.canSparkMax.setSecondaryCurrentLimit(50.0)
+        rightMotor.canSparkMax.setSecondaryCurrentLimit(50.0)
     }
 
     override fun setNeutral() {
