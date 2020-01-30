@@ -46,8 +46,8 @@ class FlywheelController {
         `1`,
         `1`,
         plant,
-        vec(`1`).fill(0.15),  // Model stddev
-        vec(`1`).fill(1.5),   // Measurement stddev
+        vec(`1`).fill(1.5),  // Model stddev
+        vec(`1`).fill(0.9),   // Measurement stddev
         0.01
     )
 
@@ -107,8 +107,8 @@ class FlywheelController {
 object FlywheelCoeffs {
     val G = 1.0
     val numMotors = 2
-    val J = 0.01 // kgm2
-    val motor = gearbox(kMotorFalcon500.copy(freeSpeed = kMotorFalcon500.freeSpeed - 1100.rpm), numMotors)
+    val J = 0.02 // kgm2
+    val motor = gearbox(kMotorFalcon500.copy(freeSpeed = kMotorFalcon500.freeSpeed - 800.rpm), numMotors)
 
     // https://file.tavsys.net/control/controls-engineering-in-frc.pdf theorem 7.3.1
     // All of these matrices are continuous, wpilib classes discretize them

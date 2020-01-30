@@ -39,10 +39,10 @@ class FlywheelControllerTest {
 
         val statesChart = QuickChart.getChart("Velocity vs time", "Time", "Velocity", "Velocity", times, states)
         val inputsChart = QuickChart.getChart("Control Effort", "Time", "Voltage", "Control Effort", times, inputs)
-        SwingWrapper(listOf(statesChart, inputsChart)).displayChartMatrix()
-        while(true) {
-            Thread.sleep(10000)
-        }
+//        SwingWrapper(listOf(statesChart, inputsChart)).displayChartMatrix()
+//        while(true) {
+//            Thread.sleep(10000)
+//        }
         assertTrue("Controller should converge to reference. Reference ${controller.reference.value}, velocity ${controller.velocity.value}", controller.atGoal)
     }
 }

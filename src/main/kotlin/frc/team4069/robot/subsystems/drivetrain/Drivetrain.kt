@@ -1,6 +1,5 @@
-package frc.team4069.robot.subsystems
+package frc.team4069.robot.subsystems.drivetrain
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.geometry.Rotation2d
@@ -18,7 +17,6 @@ import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.rev.SaturnMAX
-import frc.team4069.saturn.lib.sensors.SaturnPigeon
 import frc.team4069.saturn.lib.subsystem.TankDriveSubsystem
 import kotlin.properties.Delegates
 
@@ -33,21 +31,29 @@ object Drivetrain : TankDriveSubsystem() {
     var gear by Delegates.observable(Gear.High) { _, old, new ->
         if(old != new) {
             when(new) {
-                Gear.High-> {
-                    leftEncoder.canEncoder.positionConversionFactor = kHighGearConversion
-                    leftEncoder.canEncoder.velocityConversionFactor = kHighGearConversion
+                Gear.High -> {
+                    leftEncoder.canEncoder.positionConversionFactor =
+                        kHighGearConversion
+                    leftEncoder.canEncoder.velocityConversionFactor =
+                        kHighGearConversion
 
-                    rightEncoder.canEncoder.positionConversionFactor = kHighGearConversion
-                    rightEncoder.canEncoder.velocityConversionFactor = kHighGearConversion
+                    rightEncoder.canEncoder.positionConversionFactor =
+                        kHighGearConversion
+                    rightEncoder.canEncoder.velocityConversionFactor =
+                        kHighGearConversion
 
                     shifter.set(DoubleSolenoid.Value.kForward)
                 }
                 Gear.Low -> {
-                    leftEncoder.canEncoder.positionConversionFactor = kLowGearConversion
-                    leftEncoder.canEncoder.velocityConversionFactor = kLowGearConversion
+                    leftEncoder.canEncoder.positionConversionFactor =
+                        kLowGearConversion
+                    leftEncoder.canEncoder.velocityConversionFactor =
+                        kLowGearConversion
 
-                    rightEncoder.canEncoder.positionConversionFactor = kLowGearConversion
-                    rightEncoder.canEncoder.velocityConversionFactor = kLowGearConversion
+                    rightEncoder.canEncoder.positionConversionFactor =
+                        kLowGearConversion
+                    rightEncoder.canEncoder.velocityConversionFactor =
+                        kLowGearConversion
 
                     shifter.set(DoubleSolenoid.Value.kReverse)
                 }
@@ -80,11 +86,15 @@ object Drivetrain : TankDriveSubsystem() {
         get() = (leftEncoder.velocity + rightEncoder.velocity) / 2.0
 
     init {
-        leftEncoder.canEncoder.positionConversionFactor = kHighGearConversion
-        leftEncoder.canEncoder.velocityConversionFactor = kHighGearConversion
+        leftEncoder.canEncoder.positionConversionFactor =
+            kHighGearConversion
+        leftEncoder.canEncoder.velocityConversionFactor =
+            kHighGearConversion
         leftEncoder.resetPosition(0.meter)
-        rightEncoder.canEncoder.positionConversionFactor = kHighGearConversion
-        rightEncoder.canEncoder.velocityConversionFactor = kHighGearConversion
+        rightEncoder.canEncoder.positionConversionFactor =
+            kHighGearConversion
+        rightEncoder.canEncoder.velocityConversionFactor =
+            kHighGearConversion
         rightEncoder.resetPosition(0.meter)
 
         leftMotor.outputInverted = false

@@ -19,9 +19,9 @@ object Hood : SaturnSubsystem() {
         talon.talon.apply {
             configPeakOutputForward(0.3)
             configPeakOutputReverse(-0.3)
-            config_kP(0, 0.8)
+            config_kP(0, 0.75)
             config_kI(0, 0.0005)
-            config_kD(0, 0.0)
+            config_kD(0, 0.2)
         }
         encoder.resetPosition(0.degree)
     }

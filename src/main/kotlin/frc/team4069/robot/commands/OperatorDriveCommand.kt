@@ -1,7 +1,7 @@
 package frc.team4069.robot.commands
 
 import frc.team4069.robot.OI
-import frc.team4069.robot.subsystems.Drivetrain
+import frc.team4069.robot.subsystems.drivetrain.Drivetrain
 import frc.team4069.saturn.lib.commands.SaturnCommand
 import kotlin.math.pow
 
