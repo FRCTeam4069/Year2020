@@ -1,22 +1,30 @@
 package frc.team4069.saturh.lib.mathematics.statespace
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj.math.StateSpaceUtils
 import edu.wpi.first.wpiutil.math.numbers.N2
 import edu.wpi.first.wpiutil.math.numbers.N3
 import edu.wpi.first.wpiutil.math.numbers.N5
+import frc.team4069.robot.subsystems.drivetrain.DrivetrainEstimator
 import frc.team4069.saturn.lib.mathematics.matrix.*
 import frc.team4069.saturn.lib.mathematics.model.gearbox
 import frc.team4069.saturn.lib.mathematics.model.kMotorCim
 import frc.team4069.saturn.lib.mathematics.statespace.ExtendedKalmanFilter
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Twist2d
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.conversions.meter
+import frc.team4069.saturn.lib.mathematics.units.conversions.radian
+import org.junit.Assert
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.MathContext
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class ExtendedKalmanFilterTest {
 
@@ -90,29 +98,23 @@ class ExtendedKalmanFilterTest {
         return vec(`3`).fill(pose.translation.x, pose.translation.y, pose.rotation.radians)
     }
 
-    fun globalF(x: Vector<N3>, u: Vector<N2>): Vector<N3> {
-        val rb = 1.178.feet.meter
-        val mat = mat(`3`, `2`).fill(0.5*0.01, 0.5*0.01, 0.0, 0.0, 0.01*-(1.0/(2*rb)), 0.01*(1.0/(2*rb)))
-        val twist = mat * u
-        return pexp(twist) / 0.01
-    }
-
-    fun globalH(x: Vector<N3>, u: Vector<N2>): Vector<N3> {
-        return x
-    }
-
     @Test
     fun testEkf2() {
         val dt = 0.01.second
+        val observer = DrivetrainEstimator()
+        val odometry = DifferentialDriveOdometry(Rotation2d(0.radian))
+        odometry.update(Rotation2d(45.degree), 0.02 / sqrt(2.0), 0.02)
 
-        val observer = ExtendedKalmanFilter(`3`, `2`, `3`, this::globalF, this::globalH,
-            vec(`3`).fill(0.5, 1.0, 0.5),
-            vec(`3`).fill(0.01, 2.0, 0.1), dt)
+        observer.update(dt, vec(`3`).fill(0.02 / sqrt(2.0), 0.02, 45.degree.radian))
 
-        val u = vec(`2`).fill(2.0, 2.0)
+        Assert.assertEquals(observer.observer.xHat[0], odometry.poseMeters.translation.x, 1E-9)
+        Assert.assertEquals(observer.observer.xHat[1], odometry.poseMeters.translation.y, 1E-9)
+        Assert.assertEquals(observer.observer.xHat[2], odometry.poseMeters.rotation.radians, 1E-9)
+    }
 
-        observer.predict(u, dt)
-
-        observer.correct(u, globalH(observer.xHat, u))
+    fun roundToSigfigs(value: Double, sigfigs: Int): Double {
+        val bd = BigDecimal(value)
+        bd.round(MathContext(sigfigs))
+        return bd.toDouble()
     }
 }

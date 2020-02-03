@@ -1,12 +1,12 @@
 package frc.team4069.robot.subsystems.drivetrain
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Twist2d
-import edu.wpi.first.wpilibj.math.StateSpaceUtils
-import edu.wpi.first.wpiutil.math.numbers.N2
 import edu.wpi.first.wpiutil.math.numbers.N3
 import frc.team4069.saturn.lib.mathematics.matrix.*
 import frc.team4069.saturn.lib.mathematics.statespace.ExtendedKalmanFilter
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Twist2d
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
@@ -22,11 +22,13 @@ class DrivetrainEstimator {
     /**
      * The extended kalman filter
      */
-    val observer = ExtendedKalmanFilter(`3`, `3`, `3`, { x, u -> stateUpdate(x, u, kNominalDt) },
+    val observer = ExtendedKalmanFilter(`3`, `3`, `3`, this::stateUpdate,
         this::h,
         vec(`3`).fill(0.3, 1.0, 0.4), // State stddevs
         vec(`3`).fill(2.0, 2.5, 3.0), // Measurement stddevs
-        kNominalDt)
+        kNominalDt,
+        useRungeKutta = false
+        )
 
     /**
      * State update function.
@@ -34,12 +36,13 @@ class DrivetrainEstimator {
      * @param inputs  Drivetrain velocities, [[dl, dr, dtheta]]^T
      * @param dt      The time since the last call to update the observer
      */
-    private fun stateUpdate(x: Vector<N3>, inputs: Vector<N3>, dt: SIUnit<Second>): Vector<N3> {
+    private fun stateUpdate(x: Vector<N3>, inputs: Vector<N3>): Vector<N3> {
         // Matrix form of calculations in DifferentialDriveOdometry
         val mat = mat(`3`, `3`).fill(.5, .5, .0, .0, .0, .0, .0, .0, 1.0)
 
-        val twist = Pose2d().exp((mat * inputs).asTwist()).toVector()
-        return twist / dt.value
+        val twist = Pose2d(x[0].meter, x[1].meter, x[2].radian).exp((mat * inputs).asTwist())
+        // theta_2 - theta_1 + theta_1 = theta_2; new angle of robot
+        return Pose2d(twist.translation, Rotation2d(inputs[2] + x[2])).toVector()
     }
 
     /**
@@ -57,7 +60,7 @@ class DrivetrainEstimator {
      * @param measuredPose The pose of the robot as measured using data from the Limelight. This value should only be nonnull if a vision target is in sight.
      */
     fun update(dt: SIUnit<Second>, u: Vector<N3>, measuredPose: Pose2d? = null) {
-        observer.predict(u, dt) { x, u -> stateUpdate(x, u, dt) }
+        observer.predict(u, dt)
         // Implication is that a vision target is in sight
         if(measuredPose != null) {
             observer.correct(u, measuredPose.toVector())

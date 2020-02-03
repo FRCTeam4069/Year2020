@@ -20,7 +20,8 @@ class ExtendedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
     val h: OutputFunction<States, Inputs, Outputs>,
     stateStdDevs: Vector<States>,
     measurementStdDevs: Vector<Outputs>,
-    dt: SIUnit<Second>
+    dt: SIUnit<Second>,
+    val useRungeKutta: Boolean = true
 ) {
 
     var xHat: Vector<States> = zeros(states)
@@ -68,7 +69,12 @@ class ExtendedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
         val discA = discPair.first
         val discQ = discPair.second
 
-        xHat = rungeKutta(f, xHat, u, dt)
+        if(useRungeKutta) {
+            xHat = rungeKutta(f, xHat, u, dt)
+        } else {
+            xHat = f(xHat, u)
+        }
+
         P = discA * P * discA.transpose() + discQ
         discR = StateSpaceUtils.discretizeR(contR, dt.value)
     }
