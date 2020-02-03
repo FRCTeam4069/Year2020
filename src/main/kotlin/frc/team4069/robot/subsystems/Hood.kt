@@ -8,19 +8,20 @@ import frc.team4069.saturn.lib.mathematics.units.degree
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.NativeUnitRotationModel
 import frc.team4069.saturn.lib.mathematics.units.nativeunits.STU
 import frc.team4069.saturn.lib.motor.ctre.SaturnSRX
+import frc.team4069.saturn.lib.shuffleboard.logging.tab
 
 object Hood : SaturnSubsystem() {
 
     private val talon = SaturnSRX(RobotMap.Hood.TALON_ID, NativeUnitRotationModel(4096.STU))
     private val encoder = talon.encoder
-    private val maxPos = 43.degree * 2.33 // After additional reduction
+    private val maxPos = 40.degree * 2.33 // After additional reduction
 
     init {
         talon.talon.apply {
             configPeakOutputForward(0.3)
             configPeakOutputReverse(-0.3)
-            config_kP(0, 0.75)
-            config_kI(0, 0.0005)
+            config_kP(0, 0.85)
+            config_kI(0, 0.0006)
             config_kD(0, 0.2)
         }
         encoder.resetPosition(0.degree)

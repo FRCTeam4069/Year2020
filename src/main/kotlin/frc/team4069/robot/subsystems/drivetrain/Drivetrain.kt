@@ -22,13 +22,16 @@ import kotlin.properties.Delegates
 
 object Drivetrain : TankDriveSubsystem() {
 
+    // Sensitivity of operator inputs for each gear
     const val kHighGearSensitivity = 0.6
     const val kLowGearSensitivity = 0.625
 
+    // Conversion factors from motor rotations to output rotations
     const val kHighGearConversion = 1.0 / 8.93
     const val kLowGearConversion = 1.0 / 24.23
 
     var gear by Delegates.observable(Gear.High) { _, old, new ->
+        // Updates are expensive, should only be done if a new value is set
         if(old != new) {
             when(new) {
                 Gear.High -> {

@@ -37,7 +37,7 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
-    val TEST_SHOOTING_PRESET = 200.radian.velocity
+    val TRENCH_SHOT_PRESET = 3700.rpm
 
     fun enable() {
         controller.enable()
@@ -65,9 +65,9 @@ object Flywheel : SaturnSubsystem() {
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
-        zmqContext = ZContext(2)
-        sock = zmqContext!!.createSocket(SocketType.PUSH)
-        sock!!.bind("tcp://*:5802")
+//        zmqContext = ZContext(2)
+//        sock = zmqContext!!.createSocket(SocketType.PUSH)
+//        sock!!.bind("tcp://*:5802")
 
         val json = Json(JsonConfiguration.Stable)
         val delta = DeltaTime()

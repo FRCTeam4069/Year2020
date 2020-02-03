@@ -8,12 +8,6 @@ import edu.wpi.first.wpiutil.math.numbers.N1
 import frc.team4069.saturn.lib.mathematics.matrix.*
 import frc.team4069.saturn.lib.mathematics.model.gearbox
 import frc.team4069.saturn.lib.mathematics.model.kMotorFalcon500
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceController
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpaceObserver
-import frc.team4069.saturn.lib.mathematics.statespace.StateSpacePlant
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceControllerCoeffs
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpaceObserverCoeffs
-import frc.team4069.saturn.lib.mathematics.statespace.coeffs.StateSpacePlantCoeffs
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.AngularVelocity
 import frc.team4069.saturn.lib.mathematics.units.derived.Volt
@@ -46,8 +40,8 @@ class FlywheelController {
         `1`,
         `1`,
         plant,
-        vec(`1`).fill(1.5),  // Model stddev
-        vec(`1`).fill(0.9),   // Measurement stddev
+        vec(`1`).fill(0.6),  // Model stddev
+        vec(`1`).fill(0.1),   // Measurement stddev
         0.01
     )
 
