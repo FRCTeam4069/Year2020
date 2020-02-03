@@ -24,8 +24,8 @@ class DrivetrainEstimator {
      */
     val observer = ExtendedKalmanFilter(`3`, `3`, `3`, this::stateUpdate,
         this::h,
-        vec(`3`).fill(0.3, 1.0, 0.4), // State stddevs
-        vec(`3`).fill(2.0, 2.5, 3.0), // Measurement stddevs
+        vec(`3`).fill(0.01, 0.2, 0.001), // State stddevs
+        vec(`3`).fill(0.05, 0.1, 0.01),
         kNominalDt,
         useRungeKutta = false
         )
@@ -60,12 +60,15 @@ class DrivetrainEstimator {
      * @param measuredPose The pose of the robot as measured using data from the Limelight. This value should only be nonnull if a vision target is in sight.
      */
     fun update(dt: SIUnit<Second>, u: Vector<N3>, measuredPose: Pose2d? = null) {
-        observer.predict(u, dt)
         // Implication is that a vision target is in sight
         if(measuredPose != null) {
             observer.correct(u, measuredPose.toVector())
         }
+        observer.predict(u, dt)
     }
+
+    val pose: Pose2d
+        get() = Pose2d(observer.xHat[0], observer.xHat[1], Rotation2d(observer.xHat[2]))
 
     // Utility functions to convert between vectors and wpilib geometry classes
     private fun Vector<N3>.asTwist(): Twist2d {

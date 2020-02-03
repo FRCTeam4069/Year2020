@@ -1,26 +1,30 @@
-package frc.team4069.saturh.lib.mathematics.statespace
+package frc.team4069.saturn.lib.mathematics.statespace
 
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj.math.StateSpaceUtils
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpiutil.math.numbers.N2
 import edu.wpi.first.wpiutil.math.numbers.N3
 import edu.wpi.first.wpiutil.math.numbers.N5
 import frc.team4069.robot.subsystems.drivetrain.DrivetrainEstimator
 import frc.team4069.saturn.lib.mathematics.matrix.*
+import frc.team4069.saturn.lib.mathematics.matrix.Vector
 import frc.team4069.saturn.lib.mathematics.model.gearbox
 import frc.team4069.saturn.lib.mathematics.model.kMotorCim
-import frc.team4069.saturn.lib.mathematics.statespace.ExtendedKalmanFilter
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Rotation2d
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Twist2d
+import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryConfig
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.conversions.feet
-import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.mathematics.units.conversions.radian
 import org.junit.Assert
 import org.junit.Test
-import java.math.BigDecimal
-import java.math.MathContext
+import org.knowm.xchart.SwingWrapper
+import org.knowm.xchart.XYChartBuilder
+import java.util.*
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -55,10 +59,10 @@ class ExtendedKalmanFilterTest {
         result[2] = ((vr - vl) / (2.0 * rb)).value
         result[3] =
             k1 * ((C1 * vl.value) + (C2 * Vl.value)) +
-            k2 * ((C1 * vr.value) + (C2 * Vr.value))
+                    k2 * ((C1 * vr.value) + (C2 * Vr.value))
         result[4] =
             k2 * ((C1 * vl.value) + (C2 * Vl.value)) +
-            k1 * ((C1 * vr.value) + (C2 * Vr.value))
+                    k1 * ((C1 * vr.value) + (C2 * Vr.value))
 
         return result
     }
@@ -75,9 +79,11 @@ class ExtendedKalmanFilterTest {
     fun extendedKalmanFilterTest() {
         val dt = 0.00505.second
 
-        val observer = ExtendedKalmanFilter(`5`, `2`,`3`, this::dynamics, this::localMeasurementModel,
+        val observer = ExtendedKalmanFilter(
+            `5`, `2`, `3`, this::dynamics, this::localMeasurementModel,
             vec(`5`).fill(0.5, 0.5, 10.0, 1.0, 1.0),
-            vec(`3`).fill(0.0001, 0.01, 0.01), dt)
+            vec(`3`).fill(0.0001, 0.01, 0.01), dt
+        )
 
         val u = vec(`2`).fill(12.0, 12.0)
 
@@ -112,9 +118,86 @@ class ExtendedKalmanFilterTest {
         Assert.assertEquals(observer.observer.xHat[2], odometry.poseMeters.rotation.radians, 1E-9)
     }
 
-    fun roundToSigfigs(value: Double, sigfigs: Int): Double {
-        val bd = BigDecimal(value)
-        bd.round(MathContext(sigfigs))
-        return bd.toDouble()
+
+    @Test
+    fun testEkfCorrect() {
+        val observer = DrivetrainEstimator()
+        val dt = DrivetrainEstimator.kNominalDt
+
+        val traj = TrajectoryGenerator.generateTrajectory(
+            listOf(
+                Pose2d(),
+                Pose2d(5.meter, 5.meter, 0.radian)
+            ),
+            TrajectoryConfig(
+                3.meter.velocity,
+                3.meter.acceleration,
+                listOf(),
+                0.meter.velocity,
+                0.meter.velocity,
+                reversed = false
+            )
+        )
+
+        val kinematics = DifferentialDriveKinematics(observer.trackWidth)
+        var lastPose: Pose2d? = null
+
+        val trajXs = mutableListOf<Double>()
+        val trajYs = mutableListOf<Double>()
+        val measuredXs = mutableListOf<Double>()
+        val measuredYs = mutableListOf<Double>()
+        val filterXs = mutableListOf<Double>()
+        val filterYs = mutableListOf<Double>()
+        val rand = Random()
+
+        var t = 0.0
+        while(t <= traj.totalTimeSeconds) {
+            val state = traj.sample(t)
+            val wheelSpeeds = kinematics.toWheelSpeeds(
+                ChassisSpeeds(
+                    state.velocityMetersPerSecond,
+                    0.0,
+                    state.velocityMetersPerSecond * state.curvatureRadPerMeter
+                )
+            )
+
+            val u = if (lastPose != null) {
+                vec(`3`).fill(
+                    wheelSpeeds.leftMetersPerSecond * dt.value, wheelSpeeds.rightMetersPerSecond * dt.value,
+                    state.poseMeters.rotation.radians - lastPose.rotation.radians)
+            } else {
+                vec(`3`).fill(
+                    wheelSpeeds.leftMetersPerSecond * dt.value,
+                    wheelSpeeds.rightMetersPerSecond * dt.value,
+                    0.0
+                )
+            }
+
+            val measuredPose = state.poseMeters + Pose2d(rand.nextGaussian() * 0.05, rand.nextGaussian() * 0.1, Rotation2d(rand.nextGaussian().radian * 0.01))
+
+            observer.update(dt, u, measuredPose)
+            trajXs.add(state.poseMeters.translation.x)
+            trajYs.add(state.poseMeters.translation.y)
+            filterXs.add(observer.pose.translation.x)
+            filterYs.add(observer.pose.translation.y)
+            measuredXs.add(measuredPose.translation.x)
+            measuredYs.add(measuredPose.translation.y)
+            lastPose = state.poseMeters
+            t += dt.value
+        }
+
+        var chart = XYChartBuilder().build()
+        chart.addSeries("Trajectory", trajXs, trajYs)
+        chart.addSeries("EKF", filterXs, filterYs)
+        chart.addSeries("Measurements", measuredXs, measuredYs)
+
+        SwingWrapper(chart).displayChart()
+        Thread.sleep(1000000000000)
     }
+
+    operator fun Pose2d.plus(other: Pose2d) = Pose2d(
+        translation.x + other.translation.x,
+        translation.y + other.translation.y,
+        rotation + other.rotation
+    )
 }
