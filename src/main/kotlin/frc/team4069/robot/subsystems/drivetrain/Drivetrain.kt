@@ -13,11 +13,15 @@ import frc.team4069.saturn.lib.mathematics.twodim.control.asChassisSpeeds
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.conversions.meter
+import frc.team4069.saturn.lib.mathematics.units.hertz
 import frc.team4069.saturn.lib.mathematics.units.meter
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.rev.SaturnMAX
 import frc.team4069.saturn.lib.subsystem.TankDriveSubsystem
+import frc.team4069.saturn.lib.util.DeltaTime
+import frc.team4069.saturn.lib.util.launchFrequency
+import kotlinx.coroutines.GlobalScope
 import kotlin.properties.Delegates
 
 object Drivetrain : TankDriveSubsystem() {
@@ -79,6 +83,7 @@ object Drivetrain : TankDriveSubsystem() {
 
     override val driveModel = DifferentialDriveKinematics(2.3563.feet.meter) // wpilib class doesnt have units, so just use for conversions
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
+    val estimator = DrivetrainEstimator()
     //DO NOT USE
     override val trajectoryTracker = LTVUnicycleTracker(16.409255758939636,
         5.743092173917074,

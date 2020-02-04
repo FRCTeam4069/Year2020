@@ -41,7 +41,7 @@ object OI {
 
         button(kX) {
             changeOn {
-                TowerOfDoom.setDutyCycle(0.5)
+                TowerOfDoom.setDutyCycle(0.65)
             }
 
             changeOff {

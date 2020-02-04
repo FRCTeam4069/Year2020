@@ -189,7 +189,7 @@ class ExtendedKalmanFilterTest {
         var chart = XYChartBuilder().build()
         chart.addSeries("Trajectory", trajXs, trajYs)
         chart.addSeries("EKF", filterXs, filterYs)
-        chart.addSeries("Measurements", measuredXs, measuredYs)
+//        chart.addSeries("Measurements", measuredXs, measuredYs)
 
         SwingWrapper(chart).displayChart()
         Thread.sleep(1000000000000)
