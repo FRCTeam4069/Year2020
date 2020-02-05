@@ -52,6 +52,10 @@ class DrivetrainEstimator {
         return x
     }
 
+    fun reset(initPose: Pose2d) {
+        observer.xHat = vec(`3`).fill(initPose.translation.x, initPose.translation.y, initPose.rotation.radians)
+    }
+
     /**
      * Updates the state of the extended kalman filter
      *

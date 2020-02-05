@@ -8,7 +8,7 @@ import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 
 object TowerOfDoom : SaturnSubsystem() {
-    private val talon = TalonSRX(RobotMap.Tower.TALON_ID)
+    val talon = TalonSRX(RobotMap.Tower.TALON_ID)
 //    private val indexerInput = DigitalInput(2)
 //    private val elevatorLowest = DigitalInput(3)
 

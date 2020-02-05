@@ -51,10 +51,10 @@ dependencies {
 //    implementation "frc.team4069.saturn.lib:core:2020.1.1"
 //    implementation "frc.team4069.saturn.lib:vendorREV:2020.1.1"
 //    implementation "frc.team4069.saturn.lib:vendorCTRE:2020.1.1"
-    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:9bf5ffd8af'
-    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:9bf5ffd8af'
-    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorCTRE:9bf5ffd8af'
-    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorREV:9bf5ffd8af'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:c9a6bb2c88'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:c9a6bb2c88'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorCTRE:c9a6bb2c88'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorREV:c9a6bb2c88'
     implementation 'org.zeromq:jeromq:0.5.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 

@@ -29,8 +29,8 @@ import org.zeromq.ZMQ
 import java.util.*
 
 object Flywheel : SaturnSubsystem() {
-    private val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
-    private val slave = TalonFX(RobotMap.Flywheel.SLAVE_TALON_ID)
+    val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
+    val slave = TalonFX(RobotMap.Flywheel.SLAVE_TALON_ID)
 
     private val encoder =
         Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
@@ -55,19 +55,19 @@ object Flywheel : SaturnSubsystem() {
     var sock: ZMQ.Socket? = null
 
     init {
-        talon.inverted = true
-        talon.setNeutralMode(NeutralMode.Coast)
-        slave.follow(talon)
-        slave.setInverted(InvertType.OpposeMaster)
-        slave.setNeutralMode(NeutralMode.Coast)
-        talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
-        slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
+//        talon.inverted = true
+//        talon.setNeutralMode(NeutralMode.Coast)
+//        slave.follow(talon)
+//        slave.setInverted(InvertType.OpposeMaster)
+//        slave.setNeutralMode(NeutralMode.Coast)
+//        talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
+//        slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
-        zmqContext = ZContext(2)
-        sock = zmqContext!!.createSocket(SocketType.PUSH)
-        sock!!.bind("tcp://*:5802")
+//        zmqContext = ZContext(2)
+//        sock = zmqContext!!.createSocket(SocketType.PUSH)
+//        sock!!.bind("tcp://*:5802")
 
         val json = Json(JsonConfiguration.Stable)
         val delta = DeltaTime()

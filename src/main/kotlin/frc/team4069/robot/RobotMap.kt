@@ -23,5 +23,11 @@ object RobotMap {
 
         const val RIGHT_MASTER = 5
         const val RIGHT_SLAVE = 6
+
+        const val RIGHT_ENCODER_A = 4
+        const val RIGHT_ENCODER_B = 5
+
+        const val LEFT_ENCODER_A = 6
+        const val LEFT_ENCODER_B = 7
     }
 }
