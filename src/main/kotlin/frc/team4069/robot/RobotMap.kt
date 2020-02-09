@@ -21,6 +21,9 @@ object RobotMap {
         const val LEFT_MASTER = 1
         const val LEFT_SLAVE = 2
 
+        const val SHIFTER_FWD = 0
+        const val SHIFTER_BCK = 7
+
         const val RIGHT_MASTER = 5
         const val RIGHT_SLAVE = 6
 

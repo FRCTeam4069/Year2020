@@ -55,13 +55,13 @@ object Flywheel : SaturnSubsystem() {
     var sock: ZMQ.Socket? = null
 
     init {
-//        talon.inverted = true
-//        talon.setNeutralMode(NeutralMode.Coast)
-//        slave.follow(talon)
-//        slave.setInverted(InvertType.OpposeMaster)
-//        slave.setNeutralMode(NeutralMode.Coast)
-//        talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
-//        slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
+        talon.inverted = true
+        talon.setNeutralMode(NeutralMode.Coast)
+        slave.follow(talon)
+        slave.setInverted(InvertType.OpposeMaster)
+        slave.setNeutralMode(NeutralMode.Coast)
+        talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
+        slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
 
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
@@ -69,6 +69,7 @@ object Flywheel : SaturnSubsystem() {
 //        sock = zmqContext!!.createSocket(SocketType.PUSH)
 //        sock!!.bind("tcp://*:5802")
 
+        // For data logging/model tuning
         val json = Json(JsonConfiguration.Stable)
         val delta = DeltaTime()
         val rand = Random()
@@ -80,6 +81,7 @@ object Flywheel : SaturnSubsystem() {
             if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
 
+                // For model tuning
 //                val scale = (12.volt - R * talon.supplyCurrent.amp * 2.0) / 12.volt
 //                val plantU = u * scale
 //                controller.plant.update(controller.plant.x, mat(`1`, `1`).fill(plantU.value), dt.value)

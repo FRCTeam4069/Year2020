@@ -15,7 +15,7 @@ typealias StateFunction<States, Inputs> = (Vector<States>, Vector<Inputs>) -> Ve
 typealias OutputFunction<States, Inputs, Outputs> = (Vector<States>, Vector<Inputs>) -> Vector<Outputs>
 
 class ExtendedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
-    val states: Nat<States>, val inputs: Nat<Inputs>, val outputs: Nat<Outputs>,
+    val states: Nat<States>, inputs: Nat<Inputs>, val outputs: Nat<Outputs>,
     val f: StateFunction<States, Inputs>,
     val h: OutputFunction<States, Inputs, Outputs>,
     stateStdDevs: Vector<States>,

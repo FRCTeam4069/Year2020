@@ -1,24 +1,26 @@
 package frc.team4069.robot.subsystems.drivetrain
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj.DoubleSolenoid
-import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.robot.Constants
 import frc.team4069.robot.RobotMap
 import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.mathematics.twodim.control.LTVUnicycleTracker
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.twodim.control.asChassisSpeeds
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.x
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.y
+import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.conversions.meter
-import frc.team4069.saturn.lib.mathematics.units.hertz
-import frc.team4069.saturn.lib.mathematics.units.meter
-import frc.team4069.saturn.lib.mathematics.units.velocity
-import frc.team4069.saturn.lib.mathematics.units.volt
 import frc.team4069.saturn.lib.motor.SaturnRIOEncoder
 import frc.team4069.saturn.lib.motor.rev.SaturnMAX
 import frc.team4069.saturn.lib.sensors.SaturnPigeon
@@ -48,7 +50,7 @@ object Drivetrain : TankDriveSubsystem() {
         }
     }
 
-    private val shifter = DoubleSolenoid(0, 7)
+    private val shifter = DoubleSolenoid(RobotMap.Drivetrain.SHIFTER_FWD, RobotMap.Drivetrain.SHIFTER_BCK)
 
     override val leftMotor = SaturnMAX(RobotMap.Drivetrain.LEFT_MASTER, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kLeftDrivetrainUnitModel)
     private val leftSlave = SaturnMAX(RobotMap.Drivetrain.LEFT_SLAVE, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kLeftDrivetrainUnitModel)
@@ -58,12 +60,16 @@ object Drivetrain : TankDriveSubsystem() {
     private val rightSlave = SaturnMAX(RobotMap.Drivetrain.RIGHT_SLAVE, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kRightDrivetrainUnitModel)
     val rightEncoder = SaturnRIOEncoder(Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_A, RobotMap.Drivetrain.RIGHT_ENCODER_B), Constants.kRightDrivetrainUnitModel)
 
-//    private val gyroTalon = TalonSRX(5)
-    override val gyro = SaturnPigeon(TowerOfDoom.talon)
+    override val gyro =  { Rotation2d() }//SaturnPigeon(TowerOfDoom.talon)
 
     override val driveModel = DifferentialDriveKinematics(2.3563.feet.meter) // wpilib class doesnt have units, so just use for conversions
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
     val estimator = DrivetrainEstimator()
+
+    var robotPose: Pose2d
+        get() = estimator.pose
+        set(value) = estimator.reset(value)
+
     //DO NOT USE
     override val trajectoryTracker = LTVUnicycleTracker(16.409255758939636,
         5.743092173917074,
@@ -80,11 +86,15 @@ object Drivetrain : TankDriveSubsystem() {
         leftMotor.outputInverted = false
         rightMotor.outputInverted = true
 
+        leftEncoder.encoder.setReverseDirection(true)
+
         rightSlave.follow(rightMotor)
         leftSlave.follow(leftMotor)
 
         leftMotor.canSparkMax.setSmartCurrentLimit(50)
         rightMotor.canSparkMax.setSmartCurrentLimit(50)
+
+//        gyro.setFusedHeading(0.0)
     }
 
     override fun setNeutral() {

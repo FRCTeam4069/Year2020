@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.robot.subsystems.Hood
 import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.robot.subsystems.drivetrain.Drivetrain
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.rpm
@@ -27,15 +28,25 @@ object OI {
             }
         }
 
-        button(kBumperLeft) {
-            changeOn {
-                Hood.setPosition(0.0)
-            }
-        }
+//        button(kBumperLeft) {
+//            changeOn {
+//                Hood.setPosition(0.0)
+//            }
+//        }
+//
+//        button(kBumperRight) {
+//            changeOn {
+//                Hood.setPosition(1.0)
+//            }
+//        }
 
         button(kBumperRight) {
             changeOn {
-                Hood.setPosition(1.0)
+                Drivetrain.gear = Drivetrain.Gear.Low
+            }
+
+            changeOff {
+                Drivetrain.gear = Drivetrain.Gear.High
             }
         }
 
