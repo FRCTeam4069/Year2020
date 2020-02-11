@@ -21,6 +21,7 @@ import frc.team4069.saturn.lib.mathematics.twodim.trajectory.TrajectoryConfig
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.radian
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChartBuilder
@@ -120,6 +121,7 @@ class ExtendedKalmanFilterTest {
 
 
     @Test
+    @Ignore
     fun testEkfCorrect() {
         val observer = DrivetrainEstimator()
         val dt = DrivetrainEstimator.kNominalDt
