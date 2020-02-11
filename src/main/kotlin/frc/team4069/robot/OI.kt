@@ -72,7 +72,7 @@ object OI {
     }
 
     val driveSpeed: Double
-        get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft)).deadband(0.2)
+        get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft))
 
     val driveTurn: Double
         get() = controller.getX(GenericHID.Hand.kLeft).deadband(0.2)
