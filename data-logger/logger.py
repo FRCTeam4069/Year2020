@@ -2,9 +2,10 @@
 
 import zmq
 import matplotlib.pyplot as plt
+import csv
 
 # time will always be logged
-t = []
+ts = []
 topics = {}
 
 print("Making ZMQ context")
@@ -24,23 +25,21 @@ while True:
                 topics[topic] = [obj["topics"][topic]]
             else:
                 topics[topic] = topics[topic] + [obj["topics"][topic]]
-        t += [obj["time"]]
+        ts += [obj["time"]]
     else:
-        if t is not []:
+        if ts is not []:
             print("Should display graphs")
             for (name, topic) in topics.items():
-                ref = []
-                if "Velocity" in name:
-                    ref = [350 for _x in topic]
                 plt.figure()
-                plt.plot(t, topic, label=name)
-                if ref:
-                    plt.plot(t, ref, label="Reference")
-
+                plt.plot(ts, topic, label=name)
                 plt.xlabel("Time")
                 plt.ylabel(name)
                 plt.legend()
+                with open(f"{name}.csv", "w") as f:
+                    wr = csv.writer(f, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                    for (t, value) in zip(ts, topic):
+                        wr.writerow([t, value])
 
             plt.show()
-            t.clear()
+            ts.clear()
             topics.clear()

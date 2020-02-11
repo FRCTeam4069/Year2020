@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.GenericHID
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.robot.subsystems.Hood
 import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.robot.subsystems.drivetrain.Drivetrain
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
+import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.util.deadband
 
@@ -17,7 +19,8 @@ object OI {
             changeOn {
                 if(!set) {
                     set = true
-                    Flywheel.setReference(Flywheel.TEST_SHOOTING_PRESET)
+//                    Flywheel.setReference(1675.rpm)
+                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
                 }else {
                     set = false
                     Flywheel.setReference(0.radian.velocity)
@@ -25,21 +28,31 @@ object OI {
             }
         }
 
-        button(kBumperLeft) {
-            changeOn {
-                Hood.setPosition(0.0)
-            }
-        }
+//        button(kBumperLeft) {
+//            changeOn {
+//                Hood.setPosition(0.0)
+//            }
+//        }
+//
+//        button(kBumperRight) {
+//            changeOn {
+//                Hood.setPosition(1.0)
+//            }
+//        }
 
         button(kBumperRight) {
             changeOn {
-                Hood.setPosition(1.0)
+                Drivetrain.gear = Drivetrain.Gear.Low
+            }
+
+            changeOff {
+                Drivetrain.gear = Drivetrain.Gear.High
             }
         }
 
         button(kX) {
             changeOn {
-                TowerOfDoom.setDutyCycle(0.8)
+                TowerOfDoom.setDutyCycle(0.65)
             }
 
             changeOff {
@@ -59,7 +72,7 @@ object OI {
     }
 
     val driveSpeed: Double
-        get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft)).deadband(0.2)
+        get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft))
 
     val driveTurn: Double
         get() = controller.getX(GenericHID.Hand.kLeft).deadband(0.2)
