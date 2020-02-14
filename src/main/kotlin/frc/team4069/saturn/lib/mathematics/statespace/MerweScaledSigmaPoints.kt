@@ -9,11 +9,10 @@ import frc.team4069.saturn.lib.mathematics.matrix.zeros
 import org.ejml.dense.row.CommonOps_DDRM
 import org.ejml.dense.row.factory.DecompositionFactory_DDRM
 import org.ejml.simple.SimpleMatrix
-import kotlin.math.abs
 import kotlin.math.pow
 
 
-class MerweScaledSigmaPoints<States: Num>(
+class MerweScaledSigmaPoints<States : Num>(
     val states: Nat<States>,
     val stateCov: Vector<States>,
     val alpha: Double,
@@ -41,23 +40,16 @@ class MerweScaledSigmaPoints<States: Num>(
         sigmaPoints.concatRows(x.storage)
         val lambda = alpha.pow(2) * (states.num + kappa) - states.num
 
-        val U = if(P.elementSum() == 0.0) {
-            zeros(states, states)
-        } else {
-            println((P * (lambda + states.num)).storage)
-            Matrix(StateSpaceUtils.lltDecompose((P * (lambda + states.num)).storage))
-        }
+        val U = if (P.elementSum() == 0.0) {
+            Matrix(SimpleMatrix(P.numRows, P.numCols))
+        } else Matrix<States, States>(lltDecompose((P * (lambda + states.num)).storage))
 
-        for(i in 1..states.num) {
-            val Ui = Vector<States>(U.storage.extractVector(true, i-1).transpose())
-            sigmaPoints.setRow(i - 1, 0, *(x + Ui).storage.ddrm.data)
-        }
+        for (i in 0 until states.num) {
+            val Ui = Vector<States>(U.storage.extractVector(true, i).transpose())
+            sigmaPoints.insertIntoThis(i + 1, 0, (x + Ui).transpose().storage)
+            sigmaPoints.insertIntoThis(states.num + i + 1, 0, (x - Ui).transpose().storage)
 
-        for(i in (states.num + 1)..(2 * states.num)) {
-            val Ui = Vector<States>(U.storage.extractVector(true, i - states.num - 1).transpose())
-            sigmaPoints.setRow(i - 1, 0, *(x - Ui).storage.ddrm.data)
         }
-
         return sigmaPoints
     }
 
@@ -71,10 +63,14 @@ class MerweScaledSigmaPoints<States: Num>(
         Wm = SimpleMatrix(1, 2 * states.num + 1)
         CommonOps_DDRM.fill(Wm.ddrm, c)
         Wm[0, 0] = lambda / (states.num + lambda)
-
-//        for(i in 0 until 2 * states.num + 1) {
-//            Wc[0, i] = lambda / (states.num + lambda) + (1 - alpha.pow(2) + beta)
-//            Wm[0, i] = lambda / (states.num + lambda)
-//        }
     }
+}
+
+fun lltDecompose(src: SimpleMatrix): SimpleMatrix {
+    val temp = src.copy()
+    val chol = DecompositionFactory_DDRM.chol(temp.numRows(), false)
+    if (!chol.decompose(temp.getMatrix())) throw RuntimeException("Cholesky failed!")
+
+    return SimpleMatrix.wrap(chol.getT(null))
+
 }

@@ -121,7 +121,6 @@ class ExtendedKalmanFilterTest {
 
 
     @Test
-    @Ignore
     fun testEkfCorrect() {
         val observer = DrivetrainEstimator()
         val dt = DrivetrainEstimator.kNominalDt

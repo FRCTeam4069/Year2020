@@ -1,33 +1,22 @@
-package frc.team4069.robot.subsystems.drivetrain
+package frc.team4069.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.robot.Constants
 import frc.team4069.robot.RobotMap
-import frc.team4069.robot.subsystems.TowerOfDoom
-import frc.team4069.saturn.lib.debug.LiveDashboard
 import frc.team4069.saturn.lib.mathematics.twodim.control.LTVUnicycleTracker
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.twodim.control.asChassisSpeeds
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.Pose2d
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.x
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.y
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.mathematics.units.conversions.meter
 import frc.team4069.saturn.lib.motor.SaturnRIOEncoder
 import frc.team4069.saturn.lib.motor.rev.SaturnMAX
-import frc.team4069.saturn.lib.sensors.SaturnPigeon
 import frc.team4069.saturn.lib.subsystem.TankDriveSubsystem
-import frc.team4069.saturn.lib.util.DeltaTime
-import frc.team4069.saturn.lib.util.launchFrequency
-import kotlinx.coroutines.GlobalScope
 import kotlin.properties.Delegates
 
 object Drivetrain : TankDriveSubsystem() {
@@ -64,11 +53,6 @@ object Drivetrain : TankDriveSubsystem() {
 
     override val driveModel = DifferentialDriveKinematics(2.3563.feet.meter) // wpilib class doesnt have units, so just use for conversions
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
-    val estimator = DrivetrainEstimator()
-
-    var robotPose: Pose2d
-        get() = estimator.pose
-        set(value) = estimator.reset(value)
 
     //DO NOT USE
     override val trajectoryTracker = LTVUnicycleTracker(16.409255758939636,

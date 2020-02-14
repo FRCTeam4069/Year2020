@@ -15,7 +15,7 @@ fun unscentedTransform(
 
     val y = SimpleMatrix(2 * states + 1, covDim)
     for(i in 0 until 2 * states + 1) {
-        y.setRow(i, 0, *sigmas.extractVector(true, i).ddrm.data)
+        y.insertIntoThis(i, 0, sigmas.extractVector(true, i))
     }
 
     var P = y.transpose().mult(Wc.diag()).mult(y)

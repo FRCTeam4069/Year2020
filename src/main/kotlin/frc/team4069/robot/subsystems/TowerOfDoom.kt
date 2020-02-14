@@ -9,31 +9,28 @@ import frc.team4069.saturn.lib.commands.SaturnSubsystem
 
 object TowerOfDoom : SaturnSubsystem() {
     val talon = TalonSRX(RobotMap.Tower.TALON_ID)
+    val indexer = TalonSRX(RobotMap.Tower.INDEXER_ID)
 //    private val indexerInput = DigitalInput(2)
 //    private val elevatorLowest = DigitalInput(3)
 
+    private var ballCount = 0.0
+
     init {
-        println("Init complete")
         talon.inverted = true
-//        indexerInput.requestInterrupts {
-//            if(it == InterruptableSensorBase.WaitResult.kRisingEdge) {
-//                setDutyCycle(0.4)
-//            }
-//        }
-//        indexerInput.setUpSourceEdge(true, false)
-//        indexerInput.enableInterrupts()
-//
-//        elevatorLowest.requestInterrupts {
-//            if(it == InterruptableSensorBase.WaitResult.kRisingEdge) {
-//                setDutyCycle(0.0)
-//            }
-//        }
-//        elevatorLowest.setUpSourceEdge(true, false)
-//        elevatorLowest.enableInterrupts()
+        indexer.inverted = true
+
+        indexer.configContinuousCurrentLimit(5)
+        indexer.configPeakCurrentLimit(9)
+        indexer.configPeakCurrentDuration(1000)
+        indexer.enableCurrentLimit(true)
     }
 
-    fun setDutyCycle(dutyCycle: Double) {
+    fun setTowerDutyCycle(dutyCycle: Double) {
         talon.set(ControlMode.PercentOutput, dutyCycle)
+    }
+
+    fun setIndexerDutyCycle(dutyCycle: Double) {
+        indexer.set(ControlMode.PercentOutput, dutyCycle)
     }
 }
 

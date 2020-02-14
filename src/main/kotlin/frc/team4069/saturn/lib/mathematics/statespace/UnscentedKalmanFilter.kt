@@ -24,7 +24,7 @@ class UnscentedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
 
     private val pts = MerweScaledSigmaPoints(states, stateStdDevs, 1E-3, 0.0, 2.0)
 
-    val sigmasF = SimpleMatrix(pts.numSigmas, states.num)
+    var sigmasF = SimpleMatrix(pts.numSigmas, states.num)
 
     var xHat = zeros(states)
 
@@ -37,7 +37,8 @@ class UnscentedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
     fun reset() {
         xHat = zeros(states)
 //        P = mat(states, states).fill(1.0, .0, .0, .0, .0, .0, .0, .0, .0)
-        P = eye(states)
+        P = zeros(states, states)
+        sigmasF = SimpleMatrix(pts.numSigmas, states.num)
     }
 
     fun predict(u: Vector<Inputs>, dt: SIUnit<Second>) {
@@ -45,12 +46,13 @@ class UnscentedKalmanFilter<States: Num, Inputs: Num, Outputs: Num>(
 
         for(i in 0 until pts.numSigmas) {
             val x = sigmas.extractVector(true, i).transpose()
+
             val fRow = if(useRungeKutta) {
-                rungeKutta(f, Vector(x), u, dt).transpose().storage.ddrm.data
+                rungeKutta(f, Vector(x), u, dt).transpose().storage
             } else {
-                f(Vector(x), u).transpose().storage.ddrm.data
+                f(Vector(x), u).transpose().storage
             }
-            sigmasF.setRow(i, 0, *fRow)
+            sigmasF.insertIntoThis(i, 0, fRow)
         }
 
         val (x, P) = unscentedTransform(states.num, states.num, sigmasF, pts.Wm, pts.Wc, Q.storage)

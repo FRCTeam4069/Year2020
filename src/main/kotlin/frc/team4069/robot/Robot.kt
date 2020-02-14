@@ -1,24 +1,14 @@
 package frc.team4069.robot
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.can.TalonFX
-import com.ctre.phoenix.music.Orchestra
 import edu.wpi.first.wpilibj.Compressor
-import edu.wpi.first.wpilibj.Filesystem
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.team4069.robot.commands.ControlClimberCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
-import frc.team4069.robot.subsystems.Hood
+import frc.team4069.robot.subsystems.Climber
+import frc.team4069.robot.subsystems.Drivetrain
 import frc.team4069.robot.subsystems.TowerOfDoom
-import frc.team4069.robot.subsystems.Vision
-import frc.team4069.robot.subsystems.drivetrain.Drivetrain
-import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
-import frc.team4069.saturn.lib.mathematics.units.radian
-import frc.team4069.saturn.lib.mathematics.units.velocity
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 object Robot : SaturnRobot() {
 
@@ -33,6 +23,7 @@ object Robot : SaturnRobot() {
 //        +Flywheel
 //        +TowerOfDoom
 //        +Hood
+        +Climber
         +OI.controller
 //        Vision
     }
@@ -40,6 +31,7 @@ object Robot : SaturnRobot() {
     override fun teleopInit() {
 //        Flywheel.enable()
         OperatorDriveCommand().schedule()
+        ControlClimberCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 
