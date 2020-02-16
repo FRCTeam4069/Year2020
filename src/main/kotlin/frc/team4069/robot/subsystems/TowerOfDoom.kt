@@ -16,7 +16,6 @@ object TowerOfDoom : SaturnSubsystem() {
     private var ballCount = 0.0
 
     init {
-        talon.inverted = true
         indexer.inverted = true
 
         indexer.configContinuousCurrentLimit(5)

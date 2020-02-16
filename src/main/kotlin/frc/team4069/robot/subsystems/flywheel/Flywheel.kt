@@ -37,7 +37,7 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
-    val TRENCH_SHOT_PRESET = 3750.rpm
+    val TRENCH_SHOT_PRESET = 3700.rpm
 
     fun enable() {
         controller.enable()
@@ -55,7 +55,7 @@ object Flywheel : SaturnSubsystem() {
     var sock: ZMQ.Socket? = null
 
     init {
-        talon.inverted = true
+        talon.inverted = false
         talon.setNeutralMode(NeutralMode.Coast)
         slave.follow(talon)
         slave.setInverted(InvertType.OpposeMaster)
@@ -63,6 +63,7 @@ object Flywheel : SaturnSubsystem() {
         talon.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
         slave.configSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, 50.0, 0.0, 0.0))
 
+        encoder.setReverseDirection(false)
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
 
 //        zmqContext = ZContext(2)
@@ -96,6 +97,10 @@ object Flywheel : SaturnSubsystem() {
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
         }
+    }
+
+    override fun periodic() {
+        println(encoderVelocity.value)
     }
 
     override fun setNeutral() {

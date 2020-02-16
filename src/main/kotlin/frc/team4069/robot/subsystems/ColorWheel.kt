@@ -1,4 +1,4 @@
-package frc.team4069.robot.subsystems.ColorWheel
+package frc.team4069.robot.subsystems
 
 object ColorWheel {
 

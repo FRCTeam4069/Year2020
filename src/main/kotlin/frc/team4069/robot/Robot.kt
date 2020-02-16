@@ -3,10 +3,11 @@ package frc.team4069.robot
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.commands.ControlClimberCommand
+import frc.team4069.robot.commands.ControlHoodCommand
+import frc.team4069.robot.commands.ControlIntakeCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
-import frc.team4069.robot.subsystems.Climber
-import frc.team4069.robot.subsystems.Drivetrain
-import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.robot.subsystems.*
+import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
 
@@ -19,19 +20,26 @@ object Robot : SaturnRobot() {
 
 
     override fun robotInit() {
+        // Subsystem initializations
         +Drivetrain
-//        +Flywheel
+        +Flywheel
 //        +TowerOfDoom
-//        +Hood
-        +Climber
-        +OI.controller
+        +Hood
+        +Intake
+//        +Climber
 //        Vision
+
+        // Register controllers for control handling
+        +OI.controller
+        +OI.operatorController
     }
 
     override fun teleopInit() {
-//        Flywheel.enable()
+        Flywheel.enable()
         OperatorDriveCommand().schedule()
-        ControlClimberCommand().schedule()
+        ControlHoodCommand().schedule()
+//        ControlClimberCommand().schedule()
+        ControlIntakeCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 

@@ -27,10 +27,14 @@ object Hood : SaturnSubsystem() {
         encoder.resetPosition(0.degree)
     }
 
-    // position is 0 to 1, where 0 is fully retracted and 1 is fully extended
-    fun setPosition(position: Double) {
-        val setpoint = maxPos * position
-        talon.setPosition(setpoint)
+    fun setDutyCycle(demand: Double) {
+        talon.setDutyCycle(demand)
     }
+
+    // position is 0 to 1, where 0 is fully retracted and 1 is fully extended
+//    fun setPosition(position: Double) {
+//        val setpoint = maxPos * position
+//        talon.setPosition(setpoint)
+//    }
 
 }

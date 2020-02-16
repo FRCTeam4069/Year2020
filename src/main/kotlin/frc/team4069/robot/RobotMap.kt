@@ -15,13 +15,18 @@ object RobotMap {
     }
 
     object Hood {
-        const val TALON_ID = -1
+        const val TALON_ID = 9
     }
 
     object Climber {
         const val SPARK1_ID = 30
         const val SPARK2_ID = 31
 
+    }
+
+    object Intake {
+        const val TALON_ID = 40
+        const val PIVOT_TALON_ID = 41
     }
     
     object Drivetrain {

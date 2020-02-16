@@ -6,25 +6,12 @@ import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.Drivetrain
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
+import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.util.deadband
 
 object OI {
     val controller = xboxController(0) {
-//        button(kA) {
-//            var set = false
-//
-//            changeOn {
-//                if(!set) {
-//                    set = true
-//                    Flywheel.setReference(1675.rpm)
-//                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
-//                }else {
-//                    set = false
-//                    Flywheel.setReference(0.radian.velocity)
-//                }
-//            }
-//        }
 
         button(kBumperLeft) {
             changeOn {
@@ -83,6 +70,24 @@ object OI {
         }
     }
 
+    val operatorController = xboxController(1) {
+
+        button(kA) {
+            var set = false
+
+            changeOn {
+                if (!set) {
+                    set = true
+                    Flywheel.setReference(1675.rpm)
+//                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+                } else {
+                    set = false
+                    Flywheel.setReference(0.radian.velocity)
+                }
+            }
+        }
+    }
+
     val driveSpeed: Double
         get() = (controller.getTriggerAxis(GenericHID.Hand.kRight) - controller.getTriggerAxis(GenericHID.Hand.kLeft))
 
@@ -91,4 +96,15 @@ object OI {
 
     val climberSpeed: Double
         get() = controller.getY(GenericHID.Hand.kRight).deadband(0.2)
+
+    val intakeSpeed: Double
+        get() = (operatorController.getTriggerAxis(GenericHID.Hand.kRight) - operatorController.getTriggerAxis(
+            GenericHID.Hand.kLeft
+        )).deadband(0.1)
+
+    val towerSpeed: Double
+        get() = operatorController.getY(GenericHID.Hand.kLeft)
+
+    val hoodSpeed: Double
+        get() = operatorController.getY(GenericHID.Hand.kRight)
 }
