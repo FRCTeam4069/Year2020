@@ -58,7 +58,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(300.radian.velocity)
-//        Hood.setPosition(0.7)
+        Hood.setPosition(0.5)
     }
 
     override fun autonomousPeriodic() {

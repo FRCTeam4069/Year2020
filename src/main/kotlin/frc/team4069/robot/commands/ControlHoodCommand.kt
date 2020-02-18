@@ -6,6 +6,6 @@ import frc.team4069.saturn.lib.commands.SaturnCommand
 
 class ControlHoodCommand : SaturnCommand(Hood) {
     override fun execute() {
-        Hood.setDutyCycle(OI.hoodSpeed)
+        Hood.setDutyCycle(-OI.hoodSpeed)
     }
 }
