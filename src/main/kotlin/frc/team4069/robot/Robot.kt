@@ -23,10 +23,10 @@ object Robot : SaturnRobot() {
         // Subsystem initializations
         +Drivetrain
         +Flywheel
-//        +TowerOfDoom
+        +TowerOfDoom
         +Hood
         +Intake
-//        +Climber
+        +Climber
 //        Vision
 
         // Register controllers for control handling
@@ -35,11 +35,11 @@ object Robot : SaturnRobot() {
     }
 
     override fun teleopInit() {
-        Flywheel.enable()
-        OperatorDriveCommand().schedule()
+//        Flywheel.enable()
+//        OperatorDriveCommand().schedule()
         ControlHoodCommand().schedule()
 //        ControlClimberCommand().schedule()
-        ControlIntakeCommand().schedule()
+//        ControlIntakeCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 

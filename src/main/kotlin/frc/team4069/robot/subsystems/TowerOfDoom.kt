@@ -12,16 +12,27 @@ object TowerOfDoom : SaturnSubsystem() {
     val indexer = TalonSRX(RobotMap.Tower.INDEXER_ID)
 //    private val indexerInput = DigitalInput(2)
 //    private val elevatorLowest = DigitalInput(3)
+    private val ballInput = DigitalInput(8)
 
-    private var ballCount = 0.0
+    private var ballCount = 0
+        get() = field / 2
 
     init {
+        talon.configFactoryDefault()
         indexer.inverted = true
 
         indexer.configContinuousCurrentLimit(5)
         indexer.configPeakCurrentLimit(9)
         indexer.configPeakCurrentDuration(1000)
         indexer.enableCurrentLimit(true)
+
+        ballInput.requestInterrupts {
+            if(it == InterruptableSensorBase.WaitResult.kRisingEdge) {
+                ballCount += 1
+            }
+        }
+        ballInput.enableInterrupts()
+        ballInput.setUpSourceEdge(true, false)
     }
 
     fun setTowerDutyCycle(dutyCycle: Double) {

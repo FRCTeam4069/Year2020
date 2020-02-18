@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import frc.team4069.robot.Constants
 import frc.team4069.robot.RobotMap
+import frc.team4069.robot.commands.OperatorDriveCommand
 import frc.team4069.saturn.lib.mathematics.twodim.control.LTVUnicycleTracker
 import frc.team4069.saturn.lib.mathematics.twodim.control.TrajectoryTrackerOutput
 import frc.team4069.saturn.lib.mathematics.twodim.control.asChassisSpeeds
@@ -77,6 +78,8 @@ object Drivetrain : TankDriveSubsystem() {
 
         leftMotor.canSparkMax.setSmartCurrentLimit(50)
         rightMotor.canSparkMax.setSmartCurrentLimit(50)
+
+        defaultCommand = OperatorDriveCommand()
 
 //        gyro.setFusedHeading(0.0)
     }

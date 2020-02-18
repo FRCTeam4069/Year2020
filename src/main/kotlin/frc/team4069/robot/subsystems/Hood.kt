@@ -18,8 +18,6 @@ object Hood : SaturnSubsystem() {
 
     init {
         talon.talon.apply {
-            configPeakOutputForward(0.3)
-            configPeakOutputReverse(-0.3)
             config_kP(0, 0.85)
             config_kI(0, 0.0006)
             config_kD(0, 0.2)
@@ -29,6 +27,10 @@ object Hood : SaturnSubsystem() {
 
     fun setDutyCycle(demand: Double) {
         talon.setDutyCycle(demand)
+    }
+
+    override fun periodic() {
+        println(encoder.rawPosition.value)
     }
 
     // position is 0 to 1, where 0 is fully retracted and 1 is fully extended

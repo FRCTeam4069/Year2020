@@ -40,12 +40,12 @@ class FlywheelController {
         `1`,
         `1`,
         plant,
-        vec(`1`).fill(0.6),  // Model stddev
-        vec(`1`).fill(0.1),   // Measurement stddev
+        vec(`1`).fill(0.65),  // Model stddev
+        vec(`1`).fill(0.04),   // Measurement stddev
         0.01
     )
 
-    val kTolerance = 20.radian.velocity
+    val kTolerance = 5.radian.velocity
     var atGoal = false
         private set
 

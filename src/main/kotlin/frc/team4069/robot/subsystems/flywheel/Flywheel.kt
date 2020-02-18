@@ -37,7 +37,7 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
-    val TRENCH_SHOT_PRESET = 3700.rpm
+    val TRENCH_SHOT_PRESET = 3850.rpm
 
     fun enable() {
         controller.enable()
@@ -90,17 +90,14 @@ object Flywheel : SaturnSubsystem() {
                 val data = PublishedData(true, now, mapOf(
                     "Voltage" to u.value,
                     "Velocity" to encoderVelocity.value,
-                    "KF Velocity" to velocity.value
+                    "KF Velocity" to velocity.value,
+                    "At Goal" to if(controller.atGoal) 1.0 else -1.0
                 ))
                 sock?.send(json.stringify(PublishedData.serializer(), data))
 
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
         }
-    }
-
-    override fun periodic() {
-        println(encoderVelocity.value)
     }
 
     override fun setNeutral() {
