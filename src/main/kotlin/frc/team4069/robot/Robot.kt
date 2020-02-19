@@ -35,11 +35,11 @@ object Robot : SaturnRobot() {
     }
 
     override fun teleopInit() {
-//        Flywheel.enable()
-//        OperatorDriveCommand().schedule()
-        ControlHoodCommand().schedule()
+        Flywheel.enable()
+        OperatorDriveCommand().schedule()
+//        ControlHoodCommand().schedule()
 //        ControlClimberCommand().schedule()
-//        ControlIntakeCommand().schedule()
+        ControlIntakeCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 
@@ -58,7 +58,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(300.radian.velocity)
-        Hood.setPosition(0.5)
+        Hood.setPosition(1.0)
     }
 
     override fun autonomousPeriodic() {

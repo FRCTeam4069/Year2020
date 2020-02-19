@@ -15,6 +15,7 @@ object Vision {
     private val limelight = LimelightCamera()
 
     val xOffset: SIUnit<Unitless> get() = limelight.xOffset.degree
+    val targetArea: Double get() = limelight.targetArea
 
     val hasTarget: Boolean get() = limelight.hasTargets
 }

@@ -79,6 +79,9 @@ object Drivetrain : TankDriveSubsystem() {
         leftMotor.canSparkMax.setSmartCurrentLimit(50)
         rightMotor.canSparkMax.setSmartCurrentLimit(50)
 
+        leftMotor.brakeMode = false
+        rightMotor.brakeMode = false
+
         defaultCommand = OperatorDriveCommand()
 
 //        gyro.setFusedHeading(0.0)

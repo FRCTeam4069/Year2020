@@ -5,6 +5,7 @@ import frc.team4069.robot.commands.CenterToTapeCommand
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.Drivetrain
+import frc.team4069.robot.subsystems.Hood
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.rpm
@@ -60,14 +61,15 @@ object OI {
 
     val operatorController = xboxController(1) {
 
+
         button(kA) {
             var set = false
 
             changeOn {
                 if (!set) {
                     set = true
-//                    Flywheel.setReference(1675.rpm)
-                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+                    Flywheel.setReference(1700.rpm)
+//                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
                 } else {
                     set = false
                     Flywheel.setReference(0.radian.velocity)

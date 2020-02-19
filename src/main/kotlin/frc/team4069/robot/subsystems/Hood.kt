@@ -19,8 +19,11 @@ object Hood : SaturnSubsystem() {
 
     init {
         talon.apply {
+            configFactoryDefault()
+
+
             inverted = true
-            config_kP(0, 0.5)
+            config_kP(0, 4.0)
             configForwardSoftLimitThreshold(RAW_MAX.value.toInt())
             configForwardSoftLimitEnable(true)
             configReverseSoftLimitThreshold(0)
@@ -28,10 +31,6 @@ object Hood : SaturnSubsystem() {
 
             selectedSensorPosition = 0
         }
-    }
-
-    override fun periodic() {
-        println(talon.closedLoopError)
     }
 
     fun setDutyCycle(demand: Double) {
