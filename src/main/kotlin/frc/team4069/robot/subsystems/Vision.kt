@@ -14,8 +14,18 @@ import kotlinx.coroutines.launch
 object Vision {
     private val limelight = LimelightCamera()
 
+    var ledState: LimelightCamera.LEDState
+        get() = limelight.ledState
+        set(value) {
+            limelight.ledState = value
+        }
+
     val xOffset: SIUnit<Unitless> get() = limelight.xOffset.degree
     val targetArea: Double get() = limelight.targetArea
 
     val hasTarget: Boolean get() = limelight.hasTargets
+
+    init {
+        ledState = LimelightCamera.LEDState.ForceOff
+    }
 }

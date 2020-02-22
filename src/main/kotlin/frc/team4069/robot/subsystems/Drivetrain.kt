@@ -2,6 +2,7 @@ package frc.team4069.robot.subsystems
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.controller.PIDController
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
@@ -45,14 +46,16 @@ object Drivetrain : TankDriveSubsystem() {
     override val leftMotor = SaturnMAX(RobotMap.Drivetrain.LEFT_MASTER, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kLeftDrivetrainUnitModel)
     private val leftSlave = SaturnMAX(RobotMap.Drivetrain.LEFT_SLAVE, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kLeftDrivetrainUnitModel)
     val leftEncoder = SaturnRIOEncoder(Encoder(RobotMap.Drivetrain.LEFT_ENCODER_A, RobotMap.Drivetrain.LEFT_ENCODER_B), Constants.kLeftDrivetrainUnitModel)
+    private val leftPid = PIDController(0.1, 0.0, 0.0)
 
     override val rightMotor = SaturnMAX(RobotMap.Drivetrain.RIGHT_MASTER, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kRightDrivetrainUnitModel)
     private val rightSlave = SaturnMAX(RobotMap.Drivetrain.RIGHT_SLAVE, CANSparkMaxLowLevel.MotorType.kBrushless, Constants.kRightDrivetrainUnitModel)
     val rightEncoder = SaturnRIOEncoder(Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_A, RobotMap.Drivetrain.RIGHT_ENCODER_B), Constants.kRightDrivetrainUnitModel)
+    private val rightPid = PIDController(0.1, 0.0, 0.0)
 
     override val gyro =  { Rotation2d() }//SaturnPigeon(TowerOfDoom.talon)
 
-    override val driveModel = DifferentialDriveKinematics(2.3563.feet.meter) // wpilib class doesnt have units, so just use for conversions
+    override val driveModel = DifferentialDriveKinematics(0.554)
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
 
     //DO NOT USE
@@ -95,9 +98,14 @@ object Drivetrain : TankDriveSubsystem() {
     override fun setOutput(output: TrajectoryTrackerOutput) {
         val wheelSpeeds = driveModel.toWheelSpeeds(output.asChassisSpeeds())
 
-        leftMotor.setVelocity(wheelSpeeds.leftMetersPerSecond.meter.velocity, 0.volt)
-        rightMotor.setVelocity(wheelSpeeds.rightMetersPerSecond.meter.velocity, 0.volt)
+        val arbFF = Constants.DRIVETRAIN_KV * output.linearVelocity + Constants.DRIVETRAIN_KA * output.linearAcceleration + Constants.DRIVETRAIN_KS * sign(output.linearVelocity)
+
+        leftMotor.setVoltage(2.volt)
+        leftMotor.setVelocity(wheelSpeeds.leftMetersPerSecond.meter.velocity, arbFF)
+        rightMotor.setVelocity(wheelSpeeds.rightMetersPerSecond.meter.velocity, arbFF)
     }
+
+    
 
     enum class Gear {
         Low,

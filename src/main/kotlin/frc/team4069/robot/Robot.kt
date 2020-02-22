@@ -2,14 +2,13 @@ package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.team4069.robot.commands.ControlClimberCommand
-import frc.team4069.robot.commands.ControlHoodCommand
-import frc.team4069.robot.commands.ControlIntakeCommand
-import frc.team4069.robot.commands.OperatorDriveCommand
+import frc.team4069.robot.commands.*
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
+import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.velocity
 
 object Robot : SaturnRobot() {
 
@@ -58,7 +57,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(300.radian.velocity)
-        Hood.setPosition(1.0)
+        SetDrivetrainSpeedCommand(6.feet.velocity).schedule()
     }
 
     override fun autonomousPeriodic() {

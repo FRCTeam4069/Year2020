@@ -6,11 +6,13 @@ import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.Drivetrain
 import frc.team4069.robot.subsystems.Hood
+import frc.team4069.robot.subsystems.Vision
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.util.deadband
+import frc.team4069.saturn.lib.vision.LimelightCamera
 
 object OI {
     val controller = xboxController(0) {
@@ -68,10 +70,12 @@ object OI {
             changeOn {
                 if (!set) {
                     set = true
+                    Vision.ledState = LimelightCamera.LEDState.ForceOn
                     Flywheel.setReference(1700.rpm)
 //                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
                 } else {
                     set = false
+                    Vision.ledState = LimelightCamera.LEDState.ForceOff
                     Flywheel.setReference(0.radian.velocity)
                 }
             }

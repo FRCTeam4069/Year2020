@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.DoubleSolenoid
 import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 
@@ -14,7 +15,7 @@ object Climber : SaturnSubsystem() {
     private val encoder = motor.encoder
     private val slave = CANSparkMax(RobotMap.Climber.SPARK2_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
-    val bottomLimit = DigitalInput(9)
+    private val brakeSolenoid = DoubleSolenoid(RobotMap.Climber.BRAKE_SOLENOID_FWD, RobotMap.Climber.BRAKE_SOLENOID_BACK)
 
     private val slideyBoye = TalonSRX(32)
 

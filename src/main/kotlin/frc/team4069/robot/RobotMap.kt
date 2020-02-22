@@ -11,7 +11,6 @@ object RobotMap {
 
     object Tower {
         const val TALON_ID = 12
-        const val INDEXER_ID = 13
     }
 
     object Hood {
@@ -22,10 +21,13 @@ object RobotMap {
         const val SPARK1_ID = 30
         const val SPARK2_ID = 31
 
+
+        const val BRAKE_SOLENOID_FWD = 1
+        const val BRAKE_SOLENOID_BACK = 6
     }
 
     object Intake {
-        const val TALON_ID = 40
+        const val TALON_ID = 13
         const val PIVOT_TALON_ID = 41
     }
     
