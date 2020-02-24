@@ -6,7 +6,7 @@ import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 
 object Intake : SaturnSubsystem() {
-    private val intakeTalon = TalonSRX(RobotMap.Intake.TALON_ID)
+    val intakeTalon = TalonSRX(RobotMap.Intake.TALON_ID)
 
     init {
         intakeTalon.inverted = true

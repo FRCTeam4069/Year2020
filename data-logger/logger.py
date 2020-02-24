@@ -30,8 +30,16 @@ while True:
         if ts is not []:
             print("Should display graphs")
             for (name, topic) in topics.items():
+                if "Reference" in name:
+                    continue
+
                 plt.figure()
                 plt.plot(ts, topic, label=name)
+
+                if "Left" in name:
+                    plt.plot(ts, topics["Left Reference"], label="Reference")
+                else:
+                    plt.plot(ts, topics["Right Reference"], label="Reference")
                 plt.xlabel("Time")
                 plt.ylabel(name)
                 plt.legend()
