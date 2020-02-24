@@ -97,14 +97,11 @@ object Drivetrain : TankDriveSubsystem() {
     var sock: ZMQ.Socket? = null
 
     init {
-        leftEncoder.resetPosition(0.meter)
-        rightEncoder.resetPosition(0.meter)
         leftEncoder.encoder.samplesToAverage = 10
         rightEncoder.encoder.samplesToAverage = 10
 
         leftMotor.outputInverted = false
         rightMotor.outputInverted = true
-
 
         rightSlave.follow(rightMotor)
         leftSlave.follow(leftMotor)
@@ -116,8 +113,6 @@ object Drivetrain : TankDriveSubsystem() {
         rightMotor.brakeMode = false
 
         defaultCommand = OperatorDriveCommand()
-
-        gyro.setFusedHeading(0.0)
 
 //        zmqContext = ZContext(2)
 //        sock = zmqContext!!.createSocket(SocketType.PUSH)
@@ -134,6 +129,12 @@ object Drivetrain : TankDriveSubsystem() {
     override fun setNeutral() {
         leftMotor.setDutyCycle(0.0)
         rightMotor.setDutyCycle(0.0)
+    }
+
+    override fun autoReset() {
+        leftEncoder.resetPosition(0.meter)
+        rightEncoder.resetPosition(0.meter)
+        gyro.setFusedHeading(0.0)
     }
 
     enum class Gear {
