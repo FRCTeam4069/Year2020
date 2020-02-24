@@ -14,7 +14,7 @@ import frc.team4069.saturn.lib.shuffleboard.logging.tab
 
 object Hood : SaturnSubsystem() {
 
-    val talon = TalonSRX(RobotMap.Hood.TALON_ID)
+    private val talon = TalonSRX(RobotMap.Hood.TALON_ID)
     private val RAW_MAX = 30150.STU
 
     init {
