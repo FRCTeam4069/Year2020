@@ -8,6 +8,8 @@ import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.radian
+import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.mathematics.units.velocity
 
 object Robot : SaturnRobot() {
@@ -34,12 +36,10 @@ object Robot : SaturnRobot() {
     }
 
     override fun teleopInit() {
+        Flywheel.setReference(2500.rpm)
         Flywheel.enable()
-        OperatorDriveCommand().schedule()
-//        ControlHoodCommand().schedule()
-//        ControlClimberCommand().schedule()
+//        Hood.setPosition(1.0)
         ControlIntakeCommand().schedule()
-//        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
@@ -52,12 +52,13 @@ object Robot : SaturnRobot() {
             compressor.stop()
             compressorStarted = false
         }
+
+        println(Hood.talon.selectedSensorPosition)
     }
 
     override fun autonomousInit() {
-//        Flywheel.enable()
-//        Flywheel.setReference(300.radian.velocity)
-        SetDrivetrainSpeedCommand(6.feet.velocity).schedule()
+
+//        SetDrivetrainSpeedCommand(6.feet.velocity).schedule()
     }
 
     override fun autonomousPeriodic() {

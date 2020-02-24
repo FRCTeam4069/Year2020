@@ -9,7 +9,7 @@ class ControlIntakeCommand : SaturnCommand(Intake, TowerOfDoom) {
 
     override fun execute() {
         val spd = OI.intakeSpeed
-        Intake.setDutyCycle(spd)
+        Intake.setDutyCycle(spd / 3)
         TowerOfDoom.setTowerDutyCycle(OI.towerSpeed)
     }
 }
