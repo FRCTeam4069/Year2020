@@ -72,16 +72,36 @@ marginal_speeds = np.array([1000, 1500, 2000, 2500])
 marginal_hood_angles = np.array([0.0, 0.25, 0.5, 0.75, 1.0])
 
 fig, (speeds_ax, hood_ax) = plt.subplots(1, 2)
-for hood_angle, row in zip(marginal_hood_angles, (distances - distances.mean(0, keepdims=True)) / distances.std(0, keepdims=True)):
-    hood_ax.scatter([hood_angle] * len(row), row)
-hood_ax.set_xlabel('Hood angle')
-hood_ax.set_ylabel('Distance')
+
+hood_norm = ((distances - distances.mean(0, keepdims=True)) / distances.std(0, keepdims=True)).flatten()
+hood_angles = np.repeat(marginal_hood_angles[:, np.newaxis], distances.shape[1], axis=1).flatten()
+hood_ax.scatter(hood_angles, hood_norm, c='r')
+hood_valid_indices = np.argwhere(np.logical_not(np.isnan(hood_norm)))
+hood_norm = hood_norm[hood_valid_indices][:, 0]
+hood_angles = hood_angles[hood_valid_indices][:, 0]
+slope, intercept = np.polyfit(hood_angles, hood_norm, 1)
+line_x = np.linspace(hood_angles.min(), hood_angles.max(), 500)
+line_y = (line_x * slope) + intercept
+hood_ax.plot(line_x, line_y, c='b', label=f'$y={slope:.4f}x{intercept:.4f}$')
+hood_ax.set_xlabel('Hood angle (proportion of max)')
+hood_ax.set_ylabel('Distance (normalized)')
 hood_ax.set_title('Distance by hood angle')
+hood_ax.legend()
 
-for speed, row in zip(marginal_speeds, ((distances - distances.mean(1, keepdims=True)) / distances.std(1, keepdims=True)).T):
-    speeds_ax.scatter([speed] * len(row), row)
-speeds_ax.set_xlabel('Flywheel speed')
-speeds_ax.set_ylabel('Distance')
+speeds_norm = ((distances - distances.mean(1, keepdims=True)) / distances.std(1, keepdims=True)).T.flatten()
+speeds = np.repeat(marginal_speeds[np.newaxis, :], distances.shape[0], axis=0).T.flatten()
+speeds_valid_indices = np.argwhere(np.logical_not(np.isnan(speeds_norm)))
+speeds_norm = speeds_norm[speeds_valid_indices][:, 0]
+speeds = speeds[speeds_valid_indices][:, 0]
+speeds_ax.scatter(speeds, speeds_norm, c='r')
+slope, intercept = np.polyfit(speeds, speeds_norm, 1)
+line_x = np.linspace(speeds.min(), speeds.max(), 500)
+line_y = (line_x * slope) + intercept
+speeds_ax.plot(line_x, line_y, c='b', label=f'$y={slope:.4f}x{intercept:.4f}$')
+speeds_ax.set_xlabel('Flywheel speed (rpm)')
+speeds_ax.set_ylabel('Distance (normalized)')
 speeds_ax.set_title('Distance by flywheel speed')
+speeds_ax.legend()
 
+fig.tight_layout(rect=(0, 0.05, 1, 0.95))
 plt.show()
