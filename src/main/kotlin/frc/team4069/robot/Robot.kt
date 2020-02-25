@@ -2,9 +2,11 @@ package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.commands.ControlIntakeCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
+import frc.team4069.robot.commands.drive.DrivetrainTests
 import frc.team4069.robot.subsystems.Drivetrain
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
@@ -39,18 +41,16 @@ object Robot : SaturnRobot() {
     }
 
     override fun teleopInit() {
-        Flywheel.enable()
-        OperatorDriveCommand().schedule()
+//        Flywheel.enable()
+//        OperatorDriveCommand().schedule()
 //        ControlHoodCommand().schedule()
 //        ControlClimberCommand().schedule()
-        ControlIntakeCommand().schedule()
+//        ControlIntakeCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
         controls.forEach(SaturnHID<*>::update)
-
-        println("LEFT: ${Drivetrain.leftEncoder.rawPosition.value}, RIGHT: ${Drivetrain.rightEncoder.rawPosition.value}")
 
         if (pressureSensor.pressure < 100.0 && !compressorStarted) {
             compressor.start()
@@ -99,6 +99,15 @@ object Robot : SaturnRobot() {
 
     override fun disabledInit() {
         CommandScheduler.getInstance().cancelAll()
+    }
+
+    override fun testInit() {
+        CommandScheduler.getInstance().enable()
+        TestCommand(Drivetrain).withPhases(
+            DrivetrainTests.VerifyEncodersForward(),
+            DrivetrainTests.VerifyEncodersBackwards(),
+            DrivetrainTests.VerifyEncodersTurning()
+        ).schedule()
     }
 
     operator fun SaturnHID<*>.unaryPlus() {
