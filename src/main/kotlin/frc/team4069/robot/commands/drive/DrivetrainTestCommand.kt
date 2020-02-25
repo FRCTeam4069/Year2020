@@ -3,7 +3,6 @@ package frc.team4069.robot.commands.drive
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.robot.TestCommand
 import frc.team4069.robot.subsystems.Drivetrain
-import frc.team4069.saturn.lib.mathematics.units.second
 
 object DrivetrainTests {
     class VerifyEncodersForward : TestCommand.TestPhase<Phase>(Phase.VerifyEncodersForward) {
