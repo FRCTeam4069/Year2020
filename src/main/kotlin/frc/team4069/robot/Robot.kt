@@ -8,6 +8,7 @@ import frc.team4069.robot.commands.ControlIntakeCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
 import frc.team4069.robot.commands.drive.DrivetrainTests
 import frc.team4069.robot.subsystems.Drivetrain
+import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
@@ -29,7 +30,7 @@ object Robot : SaturnRobot() {
         // Subsystem initializations
         +Drivetrain
 //        +Flywheel
-//        +TowerOfDoom
+        +TowerOfDoom
 //        +Hood
 //        +Intake
 //        +Climber
