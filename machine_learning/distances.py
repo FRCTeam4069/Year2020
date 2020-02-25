@@ -72,8 +72,8 @@ marginal_speeds = np.array([1000, 1500, 2000, 2500])
 marginal_hood_angles = np.array([0.0, 0.25, 0.5, 0.75, 1.0])
 
 distances_hood_angle_0_5 = distances[2]
-slope, intercept = np.polyfit(marginal_speeds, distances_hood_angle_0_5, 1)
-print(f'y={slope}x{intercept} for hood angle 0.5')
+slope, intercept = np.polyfit(distances_hood_angle_0_5, marginal_speeds, 1)
+print(f'y={slope}x+{intercept} for hood angle 0.5 where x is distance (in) and y is flywheel speed (rpm)')
 
 fig, (speeds_ax, hood_ax) = plt.subplots(1, 2)
 
