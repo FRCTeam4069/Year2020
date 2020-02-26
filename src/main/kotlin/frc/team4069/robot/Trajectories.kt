@@ -15,9 +15,9 @@ import frc.team4069.saturn.lib.mathematics.units.velocity
 object Trajectories {
 
     val kDefaultConfig = TrajectoryConfig(
-        maxVelocity = 2.feet.velocity,
-        maxAcceleration = 1.feet.acceleration,
-        constraints = listOf(CentripetalAccelerationConstraint(0.5.feet.acceleration.value)),
+        maxVelocity = 5.feet.velocity,
+        maxAcceleration = 2.feet.acceleration,
+        constraints = listOf(CentripetalAccelerationConstraint(1.feet.acceleration.value)),
         startVelocity = 0.feet.velocity,
         endVelocity = 0.feet.velocity,
         reversed = false

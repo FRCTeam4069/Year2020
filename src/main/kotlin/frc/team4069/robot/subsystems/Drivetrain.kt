@@ -59,7 +59,7 @@ object Drivetrain : TankDriveSubsystem() {
         Encoder(RobotMap.Drivetrain.LEFT_ENCODER_A, RobotMap.Drivetrain.LEFT_ENCODER_B, true, CounterBase.EncodingType.k1X),
         Constants.kLeftDrivetrainUnitModel
     )
-    val leftPid = PIDController(0.1, 0.0, 0.0)
+    val leftPid = PIDController(0.6, 0.0, 0.0)
 
     override val rightMotor = SaturnMAX(
         RobotMap.Drivetrain.RIGHT_MASTER,
@@ -75,23 +75,27 @@ object Drivetrain : TankDriveSubsystem() {
         Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_A, RobotMap.Drivetrain.RIGHT_ENCODER_B, false, CounterBase.EncodingType.k1X),
         Constants.kRightDrivetrainUnitModel
     )
-    val rightPid = PIDController(0.1, 0.0, 0.0)
+    val rightPid = PIDController(0.6, 0.0, 0.0)
 
     val feedforward = SimpleMotorFeedforward(
         Constants.DRIVETRAIN_KS.value, Constants.DRIVETRAIN_KV.value,
         Constants.DRIVETRAIN_KA.value
     )
 
-    override val gyro = SaturnPigeon(Intake.intakeTalon)
+    private val _gyro = SaturnPigeon(Intake.intakeTalon)
+    override val gyro = { -_gyro() } // TODO: gyro sign switching whenever it feels like it, why?
 
-    override val kinematics = DifferentialDriveKinematics(0.5717)
+    override val kinematics = DifferentialDriveKinematics(1.2) // 0.5717 tuned
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
 
     val velocity
         get() = (leftEncoder.velocity + rightEncoder.velocity) / 2.0
 
-    override val leftVelocity get() = { -> leftEncoder.velocity }
-    override val rightVelocity get() = { -> rightEncoder.velocity }
+    val distance
+        get() = (leftEncoder.position + rightEncoder.position) / 2.0
+
+    override val leftVelocity get() = leftEncoder.velocity
+    override val rightVelocity get() = rightEncoder.velocity
 
     private var zmqContext: ZContext? = null
     var sock: ZMQ.Socket? = null
@@ -113,11 +117,16 @@ object Drivetrain : TankDriveSubsystem() {
         rightMotor.brakeMode = false
 
         defaultCommand = OperatorDriveCommand()
+        _gyro.setFusedHeading(0.0)
 
 //        zmqContext = ZContext(2)
 //        sock = zmqContext!!.createSocket(SocketType.PUSH)
 //        sock!!.bind("tcp://*:5802")
     }
+
+//    override fun periodic() {
+//        println("LEFT ${leftEncoder.position.value}, RIGHT ${rightEncoder.position.value}, ANGLE: ${gyro().degrees}")
+//    }
 
     override fun lateInit() {
         localization.resetPosition(Pose2d(), gyro())
@@ -134,7 +143,7 @@ object Drivetrain : TankDriveSubsystem() {
     override fun autoReset() {
         leftEncoder.resetPosition(0.meter)
         rightEncoder.resetPosition(0.meter)
-        gyro.setFusedHeading(0.0)
+        _gyro.setFusedHeading(0.0)
     }
 
     enum class Gear {

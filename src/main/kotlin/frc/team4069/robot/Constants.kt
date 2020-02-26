@@ -12,12 +12,12 @@ object Constants {
     val kLeftDrivetrainUnitModel = NativeUnitLengthModel(2048.STU, 1.73.inch)
     val kRightDrivetrainUnitModel = NativeUnitLengthModel(2048.STU, 1.73.inch)
 
-    val DRIVETRAIN_KV = SIUnit<VelocityFeedforward>(2.15)
+    val DRIVETRAIN_KV = SIUnit<VelocityFeedforward>(2.34)
     val DRIVETRAIN_KA = SIUnit<AccelerationFeedforward>(0.4)
     val DRIVETRAIN_KS = 0.176.volt
 
-    const val RAMSETE_B = 2.0
-    const val RAMSETE_ZETA = 0.7
+    const val RAMSETE_B = 2.7
+    const val RAMSETE_ZETA = 0.99
 
     val FLYWHEEL_SPD_M = SIUnit<Fraction<AngularVelocity, Meter>>(27.924)
     val FLYWHEEL_SPD_B = 647.111.rpm
