@@ -7,11 +7,14 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team4069.robot.commands.ControlIntakeCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
 import frc.team4069.robot.commands.drive.DrivetrainTests
+import frc.team4069.robot.commands.drive.DrivetrainTrapezoidalCommand
 import frc.team4069.robot.subsystems.Drivetrain
+import frc.team4069.robot.subsystems.TowerOfDoom
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.xU
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.yU
 import frc.team4069.saturn.lib.mathematics.units.conversions.feet
 import frc.team4069.saturn.lib.subsystem.TrajectoryTrackerCommand
 import kotlinx.serialization.json.Json
@@ -64,8 +67,6 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(1000.rpm)
-        val json = Json(JsonConfiguration.Stable)
-        val datas = mutableListOf<PublishedData>()
         TrajectoryTrackerCommand(Drivetrain,
             Constants.RAMSETE_B,
             Constants.RAMSETE_ZETA,
@@ -73,24 +74,11 @@ object Robot : SaturnRobot() {
             leftPid = Drivetrain.leftPid,
             rightPid = Drivetrain.rightPid,
             feedforward = Drivetrain.feedforward,
-            resetPose = true,
-            velocityConsumer = { left, right ->
-                val data = PublishedData(
-                    true, Timer.getFPGATimestamp(),
-                    mapOf(
-                        "Left Reference" to left.value,
-                        "Right Reference" to right.value,
-                        "Left Velocity" to Drivetrain.leftVelocity().value,
-                        "Right Velocity" to Drivetrain.rightVelocity().value
-                    )
-                )
-                datas += data
-            }).andThen({
-            for (data in datas) {
-                Drivetrain.sock?.send(json.stringify(PublishedData.serializer(), data))
-            }
-            Drivetrain.sock?.send(json.stringify(PublishedData.serializer(), PublishedData(false, 0.0, mapOf())))
-        }, arrayOf())
+            resetPose = true)
+            .andThen({ ->
+                val pose = Drivetrain.robotPosition
+                println("X ${pose.translation.xU.feet}, Y ${pose.translation.yU.feet}, THETA ${pose.rotation.degrees}")
+            }, arrayOf())
             .schedule()
     }
 
