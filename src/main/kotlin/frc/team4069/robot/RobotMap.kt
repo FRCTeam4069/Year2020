@@ -10,7 +10,7 @@ object RobotMap {
     }
 
     object Tower {
-        const val TALON_ID = 12
+        const val SPARK_ID = 12
     }
 
     object Hood {
@@ -18,17 +18,22 @@ object RobotMap {
     }
 
     object Climber {
+        const val SLIDE_TALON = 32
         const val SPARK1_ID = 30
         const val SPARK2_ID = 31
 
 
-        const val BRAKE_SOLENOID_FWD = 1
-        const val BRAKE_SOLENOID_BACK = 6
+        const val BRAKE_SOLENOID_FWD = 6
+        const val BRAKE_SOLENOID_BACK = 1
     }
 
     object Intake {
-        const val TALON_ID = 13
-        const val PIVOT_TALON_ID = 41
+        const val SPARK_ID = 13
+        const val PIVOT_SPARK_ID = 41
+    }
+
+    object ColorWheel {
+        const val SPARK_ID = 45
     }
     
     object Drivetrain {

@@ -82,10 +82,10 @@ object Drivetrain : TankDriveSubsystem() {
         Constants.DRIVETRAIN_KA.value
     )
 
-    private val _gyro = SaturnPigeon(Intake.intakeTalon)
-    override val gyro = { -_gyro() } // TODO: gyro sign switching whenever it feels like it, why?
+    private val _gyro = SaturnPigeon(Climber.sliderTalon)
+    override val gyro = { -_gyro() }
 
-    override val kinematics = DifferentialDriveKinematics(1.2) // 0.5717 tuned
+    override val kinematics = DifferentialDriveKinematics(1.3) // 0.5717 tuned
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
 
     val velocity

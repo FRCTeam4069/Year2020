@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.team4069.robot.commands.ControlClimberCommand
+import frc.team4069.robot.commands.ControlColourWheelCommand
 import frc.team4069.robot.commands.ControlIntakeCommand
 import frc.team4069.robot.commands.OperatorDriveCommand
 import frc.team4069.robot.commands.drive.DrivetrainTests
 import frc.team4069.robot.commands.drive.DrivetrainTrapezoidalCommand
-import frc.team4069.robot.subsystems.Drivetrain
-import frc.team4069.robot.subsystems.TowerOfDoom
+import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
@@ -31,24 +32,26 @@ object Robot : SaturnRobot() {
     override fun robotInit() {
         // Subsystem initializations
         +Drivetrain
-//        +Flywheel
-//        +TowerOfDoom
+        +Flywheel
+        +TowerOfDoom
 //        +Hood
-//        +Intake
-//        +Climber
-//        Vision
+        +ColorWheel
+        +Intake
+        +Climber
+        Vision
 
         // Register controllers for control handling
-//        +OI.controller
-//        +OI.operatorController
+        +OI.controller
+        +OI.operatorController
     }
 
     override fun teleopInit() {
 //        Flywheel.enable()
-//        OperatorDriveCommand().schedule()
+        OperatorDriveCommand().schedule()
 //        ControlHoodCommand().schedule()
-//        ControlClimberCommand().schedule()
-//        ControlIntakeCommand().schedule()
+        ControlClimberCommand().schedule()
+        ControlIntakeCommand().schedule()
+        ControlColourWheelCommand().schedule()
 //        Hood.setPosition(0.75)
     }
 

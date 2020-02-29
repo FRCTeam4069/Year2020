@@ -16,8 +16,9 @@ object Climber : SaturnSubsystem() {
     private val slave = CANSparkMax(RobotMap.Climber.SPARK2_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     private val brakeSolenoid = DoubleSolenoid(RobotMap.Climber.BRAKE_SOLENOID_FWD, RobotMap.Climber.BRAKE_SOLENOID_BACK)
+    private var brakeEngaged = false
 
-    private val slideyBoye = TalonSRX(32)
+    val sliderTalon = TalonSRX(RobotMap.Climber.SLIDE_TALON)
 
     init {
         encoder.position = 0.0
@@ -31,10 +32,23 @@ object Climber : SaturnSubsystem() {
     }
 
     fun setDutyCycle(demand: Double) {
-        motor.set(demand)
+        if(!brakeEngaged) {
+            motor.set(demand)
+        }
+    }
+
+    fun engageBrake() {
+        brakeEngaged = true
+        brakeSolenoid.set(DoubleSolenoid.Value.kForward)
+        motor.set(0.0)
+    }
+
+    fun disengageBrake() {
+        brakeEngaged = false
+        brakeSolenoid.set(DoubleSolenoid.Value.kReverse)
     }
 
     fun setSlide(demand: Double) {
-        slideyBoye.set(ControlMode.PercentOutput, demand)
+        sliderTalon.set(ControlMode.PercentOutput, demand)
     }
 }

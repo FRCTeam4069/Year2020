@@ -16,9 +16,12 @@ object Constants {
     val DRIVETRAIN_KA = SIUnit<AccelerationFeedforward>(0.4)
     val DRIVETRAIN_KS = 0.176.volt
 
-    const val RAMSETE_B = 2.7
+    const val RAMSETE_B = 3.9
     const val RAMSETE_ZETA = 0.99
 
-    val FLYWHEEL_SPD_M = SIUnit<Fraction<AngularVelocity, Meter>>(27.924)
-    val FLYWHEEL_SPD_B = 647.111.rpm
+    val FLYWHEEL_SPD_M_05_HOOD = SIUnit<Fraction<AngularVelocity, Meter>>(27.924)
+    val FLYWHEEL_SPD_B_05_HOOD = 647.111.rpm
+
+    val FLYWHEEL_SPD_M_075_HOOD = SIUnit<Fraction<AngularVelocity, Meter>>(27.244)
+    val FLYWHEEL_SPD_B_075_HOOD = 665.135.rpm
 }

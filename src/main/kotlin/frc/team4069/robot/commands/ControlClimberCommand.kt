@@ -7,6 +7,7 @@ import frc.team4069.saturn.lib.commands.SaturnCommand
 class ControlClimberCommand : SaturnCommand(Climber) {
 
     override fun execute() {
-        Climber.setDutyCycle(OI.climberSpeed * 0.5)
+        Climber.setDutyCycle(OI.climberSpeed)
+        Climber.setSlide(OI.sliderSpeed)
     }
 }

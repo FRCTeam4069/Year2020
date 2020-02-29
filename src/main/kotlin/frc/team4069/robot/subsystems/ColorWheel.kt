@@ -1,16 +1,19 @@
 package frc.team4069.robot.subsystems
 
-object ColorWheel {
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
+import frc.team4069.robot.RobotMap
+import frc.team4069.saturn.lib.commands.SaturnSubsystem
 
-    private var inputPower = 0
+object ColorWheel : SaturnSubsystem() {
+    private val spark = CANSparkMax(RobotMap.ColorWheel.SPARK_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
-    fun init() {
-        //motor declaration etc
-    }
-    fun setOutput() {
-        //set powers to motors
-    }
-    fun setNeutral() {
+
+    override fun setNeutral() {
         //turn off powers to motors
+    }
+
+    fun setDutyCycle(demand: Double) {
+        spark.set(demand)
     }
 }

@@ -25,6 +25,8 @@ object Vision {
 
     val hasTarget: Boolean get() = limelight.hasTargets
 
+    val cameraPose: Pose2d get() = limelight.cameraPose
+
     init {
         ledState = LimelightCamera.LEDState.ForceOff
     }

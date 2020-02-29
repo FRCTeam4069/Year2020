@@ -45,7 +45,11 @@ object Flywheel : SaturnSubsystem() {
 
     fun disable() {
         controller.disable()
+        setDutyCycle(0.0)
     }
+
+    val enabled: Boolean
+        get() = controller.enabled
 
     fun setReference(speed: SIUnit<AngularVelocity>) {
         controller.reference = speed

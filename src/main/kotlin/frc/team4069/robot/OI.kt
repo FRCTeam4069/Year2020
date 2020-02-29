@@ -1,12 +1,11 @@
 package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.GenericHID
+import frc.team4069.robot.commands.AutoSetFlywheelReferenceCommand
 import frc.team4069.robot.commands.CenterToTapeCommand
+import frc.team4069.robot.commands.elevator.AutoIndexBallsCommand
+import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
-import frc.team4069.robot.subsystems.TowerOfDoom
-import frc.team4069.robot.subsystems.Drivetrain
-import frc.team4069.robot.subsystems.Hood
-import frc.team4069.robot.subsystems.Vision
 import frc.team4069.saturn.lib.hid.*
 import frc.team4069.saturn.lib.mathematics.units.radian
 import frc.team4069.saturn.lib.mathematics.units.rpm
@@ -19,8 +18,28 @@ object OI {
 
         button(kBumperRight) {
             val command = CenterToTapeCommand()
-            changeOn { command.schedule() }
-            changeOff { command.cancel() }
+            var oldValue = LimelightCamera.LEDState.ForceOff
+            changeOn {
+                command.schedule()
+                oldValue = Vision.ledState
+                Vision.ledState = LimelightCamera.LEDState.ForceOn
+            }
+            changeOff {
+                command.cancel()
+                Vision.ledState = oldValue
+            }
+        }
+
+        button(kBumperLeft) {
+            changeOn {
+                Climber.engageBrake()
+            }
+        }
+
+        button(kBack) {
+            changeOn {
+                Climber.disengageBrake()
+            }
         }
 
         button(kA) {
@@ -42,7 +61,6 @@ object OI {
         button(kX) {
             changeOn {
                 TowerOfDoom.setTowerDutyCycle(0.65)
-
             }
 
             changeOff {
@@ -63,20 +81,57 @@ object OI {
 
     val operatorController = xboxController(1) {
 
-
-        button(kA) {
-            var set = false
-
+        pov(POVSide.DOWN) {
             changeOn {
-                if (!set) {
-                    set = true
+                    Flywheel.enable()
                     Vision.ledState = LimelightCamera.LEDState.ForceOn
                     Flywheel.setReference(1700.rpm)
-//                    Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+            }
+
+            changeOff {
+                Flywheel.disable()
+                Vision.ledState = LimelightCamera.LEDState.ForceOff
+            }
+        }
+
+        pov(POVSide.UP) {
+            changeOn {
+                Flywheel.enable()
+                Vision.ledState = LimelightCamera.LEDState.ForceOn
+                Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+            }
+
+            changeOff {
+                Flywheel.disable()
+                Vision.ledState = LimelightCamera.LEDState.ForceOff
+            }
+        }
+
+
+        button(kX) {
+            changeOn(AutoIndexBallsCommand())
+        }
+
+        pov(POVSide.LEFT) {
+            val command = AutoSetFlywheelReferenceCommand()
+            changeOn {
+                command.schedule()
+            }
+
+            changeOff {
+                command.cancel()
+            }
+
+        }
+        button(kBumperRight) {
+            var extended = false
+            changeOn {
+                if(!extended) {
+                    Intake.setPivotState(Intake.PivotPosition.Extended)
+                    extended = true
                 } else {
-                    set = false
-                    Vision.ledState = LimelightCamera.LEDState.ForceOff
-                    Flywheel.setReference(0.radian.velocity)
+                    Intake.setPivotState(Intake.PivotPosition.Retracted)
+                    extended = false
                 }
             }
         }
@@ -91,14 +146,17 @@ object OI {
     val climberSpeed: Double
         get() = controller.getY(GenericHID.Hand.kRight).deadband(0.2)
 
+    val sliderSpeed: Double
+        get() = controller.getX(GenericHID.Hand.kRight).deadband(0.15)
+
     val intakeSpeed: Double
         get() = (operatorController.getTriggerAxis(GenericHID.Hand.kRight) - operatorController.getTriggerAxis(
             GenericHID.Hand.kLeft
         )).deadband(0.1)
 
     val towerSpeed: Double
-        get() = operatorController.getY(GenericHID.Hand.kLeft)
+        get() = -operatorController.getY(GenericHID.Hand.kRight).deadband(0.15)
 
-    val hoodSpeed: Double
-        get() = operatorController.getY(GenericHID.Hand.kRight)
+    val colourWheelSpeed: Double
+        get() = operatorController.getX(GenericHID.Hand.kLeft).deadband(0.15)
 }
