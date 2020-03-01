@@ -1,4 +1,4 @@
-package frc.team4069.robot.commands
+package frc.team4069.robot.commands.climber
 
 import frc.team4069.robot.OI
 import frc.team4069.robot.subsystems.Climber

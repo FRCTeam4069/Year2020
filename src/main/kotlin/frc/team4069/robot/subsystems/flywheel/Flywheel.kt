@@ -38,6 +38,7 @@ object Flywheel : SaturnSubsystem() {
     val controller = FlywheelController()
 
     val TRENCH_SHOT_PRESET = 3850.rpm
+    val CLOSE_SHOT_PRESET = 1700.rpm
 
     fun enable() {
         controller.enable()

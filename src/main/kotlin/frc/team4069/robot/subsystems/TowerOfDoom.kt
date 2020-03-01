@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.InterruptableSensorBase
 import frc.team4069.robot.RobotMap
-import frc.team4069.robot.commands.ControlTowerCommand
+import frc.team4069.robot.commands.elevator.ControlTowerCommand
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
 import java.util.concurrent.atomic.AtomicInteger
@@ -33,7 +33,7 @@ object TowerOfDoom : SaturnSubsystem() {
                     }
                 }
                 InterruptableSensorBase.WaitResult.kFallingEdge -> {
-                    if (ballCount.get() >= 2) {
+                    if (ballCount.get() >= 2 && autoIndexerState == AutoIndexerState.Intaking) {
                         autoIndexerState = AutoIndexerState.Backdriving
                         backdriveUntilTopRising = !elevatorOut.get()
                         setTowerDutyCycle(-0.1)

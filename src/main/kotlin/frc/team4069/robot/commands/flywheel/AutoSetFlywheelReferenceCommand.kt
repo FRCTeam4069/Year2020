@@ -1,4 +1,4 @@
-package frc.team4069.robot.commands
+package frc.team4069.robot.commands.flywheel
 
 import frc.team4069.robot.Constants
 import frc.team4069.robot.subsystems.Hood

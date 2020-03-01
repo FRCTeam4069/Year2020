@@ -1,15 +1,12 @@
 package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.GenericHID
-import frc.team4069.robot.commands.AutoSetFlywheelReferenceCommand
-import frc.team4069.robot.commands.CenterToTapeCommand
+import frc.team4069.robot.commands.flywheel.AutoSetFlywheelReferenceCommand
+import frc.team4069.robot.commands.drive.CenterToTapeCommand
 import frc.team4069.robot.commands.elevator.AutoIndexBallsCommand
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.hid.*
-import frc.team4069.saturn.lib.mathematics.units.radian
-import frc.team4069.saturn.lib.mathematics.units.rpm
-import frc.team4069.saturn.lib.mathematics.units.velocity
 import frc.team4069.saturn.lib.util.deadband
 import frc.team4069.saturn.lib.vision.LimelightCamera
 
@@ -85,7 +82,7 @@ object OI {
             changeOn {
                     Flywheel.enable()
                     Vision.ledState = LimelightCamera.LEDState.ForceOn
-                    Flywheel.setReference(1700.rpm)
+                    Flywheel.setReference(Flywheel.CLOSE_SHOT_PRESET)
             }
 
             changeOff {
@@ -99,11 +96,13 @@ object OI {
                 Flywheel.enable()
                 Vision.ledState = LimelightCamera.LEDState.ForceOn
                 Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+                Hood.setPosition(1.0)
             }
 
             changeOff {
                 Flywheel.disable()
                 Vision.ledState = LimelightCamera.LEDState.ForceOff
+                Hood.setPosition(0.0)
             }
         }
 

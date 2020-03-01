@@ -5,20 +5,17 @@ import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.controller.PIDController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import frc.team4069.robot.Constants
 import frc.team4069.robot.RobotMap
-import frc.team4069.robot.commands.OperatorDriveCommand
+import frc.team4069.robot.commands.drive.OperatorDriveCommand
 import frc.team4069.saturn.lib.mathematics.units.*
-import frc.team4069.saturn.lib.mathematics.units.conversions.feet
-import frc.team4069.saturn.lib.mathematics.units.conversions.meter
+import frc.team4069.saturn.lib.mathematics.units.conversions.degree
 import frc.team4069.saturn.lib.motor.SaturnRIOEncoder
 import frc.team4069.saturn.lib.motor.rev.SaturnMAX
 import frc.team4069.saturn.lib.sensors.SaturnPigeon
 import frc.team4069.saturn.lib.subsystem.TankDriveSubsystem
-import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
 import kotlin.properties.Delegates
@@ -83,7 +80,7 @@ object Drivetrain : TankDriveSubsystem() {
     )
 
     private val _gyro = SaturnPigeon(Climber.sliderTalon)
-    override val gyro = { -_gyro() }
+    override val gyro = { _gyro() }
 
     override val kinematics = DifferentialDriveKinematics(1.3) // 0.5717 tuned
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
@@ -115,18 +112,13 @@ object Drivetrain : TankDriveSubsystem() {
 
         leftMotor.brakeMode = false
         rightMotor.brakeMode = false
+        leftSlave.brakeMode = false
+        rightSlave.brakeMode = false
 
         defaultCommand = OperatorDriveCommand()
         _gyro.setFusedHeading(0.0)
 
-//        zmqContext = ZContext(2)
-//        sock = zmqContext!!.createSocket(SocketType.PUSH)
-//        sock!!.bind("tcp://*:5802")
     }
-
-//    override fun periodic() {
-//        println("LEFT ${leftEncoder.position.value}, RIGHT ${rightEncoder.position.value}, ANGLE: ${gyro().degrees}")
-//    }
 
     override fun lateInit() {
         localization.resetPosition(Pose2d(), gyro())
@@ -144,6 +136,10 @@ object Drivetrain : TankDriveSubsystem() {
         leftEncoder.resetPosition(0.meter)
         rightEncoder.resetPosition(0.meter)
         _gyro.setFusedHeading(0.0)
+    }
+
+    fun resetGyro(angle: SIUnit<Unitless>) {
+        _gyro.setFusedHeading(angle.degree)
     }
 
     enum class Gear {

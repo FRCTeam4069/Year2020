@@ -1,25 +1,21 @@
 package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.Compressor
-import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.team4069.robot.commands.ControlClimberCommand
-import frc.team4069.robot.commands.ControlColourWheelCommand
-import frc.team4069.robot.commands.ControlIntakeCommand
-import frc.team4069.robot.commands.OperatorDriveCommand
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import frc.team4069.robot.commands.auto.FriendlyTrenchAuto
+import frc.team4069.robot.commands.climber.ControlClimberCommand
+import frc.team4069.robot.commands.colourwheel.ControlColourWheelCommand
+import frc.team4069.robot.commands.intake.ControlIntakeCommand
+import frc.team4069.robot.commands.drive.OperatorDriveCommand
 import frc.team4069.robot.commands.drive.DrivetrainTests
-import frc.team4069.robot.commands.drive.DrivetrainTrapezoidalCommand
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.xU
-import frc.team4069.saturn.lib.mathematics.twodim.geometry.yU
-import frc.team4069.saturn.lib.mathematics.units.conversions.feet
+import frc.team4069.saturn.lib.mathematics.units.degree
+import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.subsystem.TrajectoryTrackerCommand
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 object Robot : SaturnRobot() {
 
@@ -34,14 +30,14 @@ object Robot : SaturnRobot() {
         +Drivetrain
         +Flywheel
         +TowerOfDoom
-//        +Hood
+        +Hood
         +ColorWheel
         +Intake
         +Climber
         Vision
 
         // Register controllers for control handling
-        +OI.controller
+//        +OI.controller
         +OI.operatorController
     }
 
@@ -70,19 +66,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(1000.rpm)
-        TrajectoryTrackerCommand(Drivetrain,
-            Constants.RAMSETE_B,
-            Constants.RAMSETE_ZETA,
-            trajectory = Trajectories.testTrajectory,
-            leftPid = Drivetrain.leftPid,
-            rightPid = Drivetrain.rightPid,
-            feedforward = Drivetrain.feedforward,
-            resetPose = true)
-            .andThen({ ->
-                val pose = Drivetrain.robotPosition
-                println("X ${pose.translation.xU.feet}, Y ${pose.translation.yU.feet}, THETA ${pose.rotation.degrees}")
-            }, arrayOf())
-            .schedule()
+        FriendlyTrenchAuto().schedule()
     }
 
     override fun autonomousPeriodic() {

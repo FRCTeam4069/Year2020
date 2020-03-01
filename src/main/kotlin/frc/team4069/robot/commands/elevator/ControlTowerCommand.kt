@@ -1,4 +1,4 @@
-package frc.team4069.robot.commands
+package frc.team4069.robot.commands.elevator
 
 import frc.team4069.robot.OI
 import frc.team4069.robot.subsystems.TowerOfDoom
