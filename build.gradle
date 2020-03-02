@@ -47,14 +47,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
 
-    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
-    implementation "frc.team4069.saturn.lib:core:2020.1.1"
-    implementation "frc.team4069.saturn.lib:vendorREV:2020.1.1"
-    implementation "frc.team4069.saturn.lib:vendorCTRE:2020.1.1"
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:bb9879a318'
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:bb9879a318'
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorCTRE:bb9879a318'
-//    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorREV:bb9879a318'
+//    implementation "frc.team4069.saturn.lib:wpi:2020.1.1"
+//    implementation "frc.team4069.saturn.lib:core:2020.1.1"
+//    implementation "frc.team4069.saturn.lib:vendorREV:2020.1.1"
+//    implementation "frc.team4069.saturn.lib:vendorCTRE:2020.1.1"
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:wpi:cafa7ae6db'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:core:cafa7ae6db'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorCTRE:cafa7ae6db'
+    implementation 'com.github.FRCTeam4069.SaturnLibrary:vendorREV:cafa7ae6db'
     implementation 'org.zeromq:jeromq:0.5.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 
