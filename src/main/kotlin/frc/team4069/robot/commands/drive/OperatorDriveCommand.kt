@@ -8,7 +8,7 @@ import kotlin.math.atanh
 
 class OperatorDriveCommand : SaturnCommand(Drivetrain) {
 
-    private val linearSlewRateLimiter = SlewRateLimiter(1.2)
+    private val linearSlewRateLimiter = SlewRateLimiter(1.4)
     private val angularSlewRateLimiter = SlewRateLimiter(5.0)
 
     override fun initialize() {
@@ -19,7 +19,8 @@ class OperatorDriveCommand : SaturnCommand(Drivetrain) {
         val linearPercent = 0.5 * atanh(0.964 * linearSlewRateLimiter.calculate(OI.driveSpeed))
 //        var angularPercent = OI.driveTurn.pow(3).coerceIn(-1.0..1.0)
         // tanh rescaled to a range of -1.0..1.0 in the given domain
-        var angularPercent = 0.5 * atanh(0.964 * angularSlewRateLimiter.calculate(OI.driveTurn))
+//        var angularPercent = 0.5 * atanh(0.964 * angularSlewRateLimiter.calculate(OI.driveTurn))
+        var angularPercent = angularSlewRateLimiter.calculate(OI.driveTurn)
         val sensitivity = when(Drivetrain.gear) {
             Drivetrain.Gear.Low -> Drivetrain.kLowGearSensitivity
             Drivetrain.Gear.High -> Drivetrain.kHighGearSensitivity

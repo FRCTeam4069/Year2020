@@ -15,15 +15,13 @@ object OI {
 
         button(kBumperRight) {
             val command = CenterToTapeCommand()
-            var oldValue = LimelightCamera.LEDState.ForceOff
             changeOn {
                 command.schedule()
-                oldValue = Vision.ledState
                 Vision.ledState = LimelightCamera.LEDState.ForceOn
             }
             changeOff {
                 command.cancel()
-                Vision.ledState = oldValue
+                Vision.ledState = LimelightCamera.LEDState.ForceOff
             }
         }
 

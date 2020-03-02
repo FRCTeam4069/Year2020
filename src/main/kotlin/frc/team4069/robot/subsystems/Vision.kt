@@ -14,10 +14,26 @@ import kotlinx.coroutines.launch
 object Vision {
     private val limelight = LimelightCamera()
 
+    private var numberOfEnables = 0
     var ledState: LimelightCamera.LEDState
         get() = limelight.ledState
         set(value) {
-            limelight.ledState = value
+            if(value == LimelightCamera.LEDState.ForceOn) {
+                numberOfEnables++
+                limelight.ledState = value
+            }else if(value == LimelightCamera.LEDState.ForceOff) {
+                numberOfEnables--
+                if(numberOfEnables < 0) {
+                    numberOfEnables = 0
+                }
+
+                if(numberOfEnables == 0) {
+                    limelight.ledState = value
+                }
+            } else {
+                limelight.ledState = value
+            }
+
         }
 
     val xOffset: SIUnit<Unitless> get() = limelight.xOffset.degree

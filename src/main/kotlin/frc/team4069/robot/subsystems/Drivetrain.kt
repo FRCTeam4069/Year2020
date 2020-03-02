@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
 object Drivetrain : TankDriveSubsystem() {
 
     // Sensitivity of operator inputs for each gear
-    const val kHighGearSensitivity = 0.4
+    const val kHighGearSensitivity = 0.55
     const val kLowGearSensitivity = 0.625
 
     var gear by Delegates.observable(Gear.High) { _, old, new ->
