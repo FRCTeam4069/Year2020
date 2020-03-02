@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
 object TowerOfDoom : SaturnSubsystem() {
     private val spark = CANSparkMax(RobotMap.Tower.SPARK_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val elevatorIn = DigitalInput(2)
-    private val elevatorOut = DigitalInput(3)
+    val elevatorOut = DigitalInput(3)
 
     var ballCount = AtomicInteger(0)
 

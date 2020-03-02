@@ -37,7 +37,7 @@ object Robot : SaturnRobot() {
         Vision
 
         // Register controllers for control handling
-//        +OI.controller
+        +OI.controller
         +OI.operatorController
     }
 

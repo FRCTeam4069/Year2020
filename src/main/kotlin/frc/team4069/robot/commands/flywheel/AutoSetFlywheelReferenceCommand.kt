@@ -6,6 +6,7 @@ import frc.team4069.robot.subsystems.Vision
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.commands.SaturnCommand
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.xU
+import frc.team4069.saturn.lib.mathematics.twodim.geometry.yU
 import frc.team4069.saturn.lib.mathematics.units.*
 import frc.team4069.saturn.lib.mathematics.units.conversions.inch
 import frc.team4069.saturn.lib.vision.LimelightCamera
@@ -21,7 +22,7 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
     var higherHood = false
 
     override fun execute() {
-        val dist = -Vision.cameraPose.translation.xU
+        val dist = sqrt(Vision.cameraPose.translation.xU.pow2() + Vision.cameraPose.translation.yU.pow2())
 
         val spd = when {
             dist > 70.inch && dist < 89.inch -> {

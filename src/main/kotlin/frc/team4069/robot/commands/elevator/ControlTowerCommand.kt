@@ -10,6 +10,11 @@ class ControlTowerCommand : SaturnCommand(TowerOfDoom) {
         val speedScalar = if(Flywheel.enabled) {
             0.8
         } else 0.4
-        TowerOfDoom.setTowerDutyCycle(OI.towerSpeed * speedScalar)
+        if(!Flywheel.enabled && !TowerOfDoom.elevatorOut.get()) {
+            TowerOfDoom.setTowerDutyCycle((OI.towerSpeed * speedScalar).coerceAtMost(0.0))
+        } else {
+
+            TowerOfDoom.setTowerDutyCycle(OI.towerSpeed * speedScalar)
+        }
     }
 }

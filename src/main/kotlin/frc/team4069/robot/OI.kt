@@ -78,7 +78,7 @@ object OI {
 
     val operatorController = xboxController(1) {
 
-        pov(POVSide.DOWN) {
+        button(kA) {
             changeOn {
                     Flywheel.enable()
                     Vision.ledState = LimelightCamera.LEDState.ForceOn
@@ -91,7 +91,7 @@ object OI {
             }
         }
 
-        pov(POVSide.UP) {
+        button(kY) {
             changeOn {
                 Flywheel.enable()
                 Vision.ledState = LimelightCamera.LEDState.ForceOn
@@ -111,7 +111,7 @@ object OI {
             changeOn(AutoIndexBallsCommand())
         }
 
-        pov(POVSide.LEFT) {
+        button(kB) {
             val command = AutoSetFlywheelReferenceCommand()
             changeOn {
                 command.schedule()
@@ -154,7 +154,7 @@ object OI {
         )).deadband(0.1)
 
     val towerSpeed: Double
-        get() = -operatorController.getY(GenericHID.Hand.kRight).deadband(0.15)
+        get() = -operatorController.getY(GenericHID.Hand.kLeft).deadband(0.15)
 
     val colourWheelSpeed: Double
         get() = operatorController.getX(GenericHID.Hand.kLeft).deadband(0.15)
