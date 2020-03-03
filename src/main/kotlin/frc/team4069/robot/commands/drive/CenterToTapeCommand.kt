@@ -8,7 +8,7 @@ import frc.team4069.saturn.lib.commands.SaturnCommand
 
 class CenterToTapeCommand : SaturnCommand(Drivetrain) {
 
-    val pidController = PIDController(0.6, 0.0, 0.0)
+    val pidController = PIDController(0.6, 0.0, 0.03)
     val linearSpeed = -0.5
 
     init {
