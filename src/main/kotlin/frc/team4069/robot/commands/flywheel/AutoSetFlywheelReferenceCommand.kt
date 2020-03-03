@@ -23,31 +23,13 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
 
     override fun execute() {
         val dist = sqrt(Vision.cameraPose.translation.xU.pow2() + Vision.cameraPose.translation.yU.pow2())
-
-        val spd = when {
-            dist > 70.inch && dist < 89.inch -> {
-                if(higherHood) {
-                    higherHood = false
-                    Hood.setPosition(0.5)
-                }
-                1.8 * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
-            }
-            dist > 89.inch -> {
-                if(!higherHood) {
-                    higherHood = true
-                    Hood.setPosition(0.75)
-                }
-                1.7 * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
-            }
-            else -> {
-                if(higherHood) {
-                    higherHood = false
-                    Hood.setPosition(0.5)
-                }
-                2 * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
-            }
+	println("Distance: ${dist.inch}")
+        val magicMultiplier = 1.7
+        if(!higherHood) {
+            higherHood = true
+            Hood.setPosition(0.5)
         }
-
+        val spd = magicMultiplier * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
         Flywheel.setReference(spd)
     }
 
