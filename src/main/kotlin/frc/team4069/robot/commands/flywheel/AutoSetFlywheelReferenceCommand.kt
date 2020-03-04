@@ -1,5 +1,6 @@
 package frc.team4069.robot.commands.flywheel
 
+import edu.wpi.first.wpilibj.MedianFilter
 import frc.team4069.robot.Constants
 import frc.team4069.robot.subsystems.Hood
 import frc.team4069.robot.subsystems.Vision
@@ -13,6 +14,9 @@ import frc.team4069.saturn.lib.vision.LimelightCamera
 
 class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
 
+    val xFilter = MedianFilter(20)
+    val yFilter = MedianFilter(20)
+
     override fun initialize() {
         Hood.setPosition(0.5)
         Vision.ledState = LimelightCamera.LEDState.ForceOn
@@ -22,14 +26,17 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
     var higherHood = false
 
     override fun execute() {
-        val dist = sqrt(Vision.cameraPose.translation.xU.pow2() + Vision.cameraPose.translation.yU.pow2())
-	println("Distance: ${dist.inch}")
-        val magicMultiplier = 1.7
+        val pose = Vision.cameraPose
+        val xMed = xFilter.calculate(pose.translation.xU.inch).inch
+        val yMed = yFilter.calculate(pose.translation.yU.inch).inch
+        val dist = sqrt(xMed.pow2() + yMed.pow2())
+	    println("Distance: ${dist.inch}")
+        val magicMultiplier = 1.58
         if(!higherHood) {
             higherHood = true
-            Hood.setPosition(0.5)
+            Hood.setPosition(0.75)
         }
-        val spd = magicMultiplier * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
+        val spd = magicMultiplier * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
         Flywheel.setReference(spd)
     }
 
