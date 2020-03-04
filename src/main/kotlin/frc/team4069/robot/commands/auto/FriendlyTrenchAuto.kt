@@ -44,35 +44,36 @@ fun FriendlyTrenchAuto() = sequential {
             +UnloadTowerCommand()
         }
     }
-//    +AdjustIntakePivotCommand(Intake.PivotPosition.Extended)
+    +AdjustIntakePivotCommand(Intake.PivotPosition.Extended)
     +SetIntakeSpeedCommand(1.0)
-    +TrajectoryTrackerCommand(
-        Drivetrain,
-        Constants.RAMSETE_B,
-        Constants.RAMSETE_ZETA,
-        trajectory = Trajectories.shootPositionToGenerator,
-        leftPid = Drivetrain.leftPid,
-        rightPid = Drivetrain.rightPid,
-        feedforward = Drivetrain.feedforward
-    )
-    +WaitCommand(0.75)
-    +SetIntakeSpeedCommand(0.0)
-    +parallelRace {
-        +AutoSetFlywheelReferenceCommand()
-        +sequential {
-            +TrajectoryTrackerCommand(
-                Drivetrain,
-                Constants.RAMSETE_B,
-                Constants.RAMSETE_ZETA,
-                trajectory = Trajectories.generatorToShootPosition,
-                leftPid = Drivetrain.leftPid,
-                rightPid = Drivetrain.rightPid,
-                feedforward = Drivetrain.feedforward
-            )
-            +WaitCommand(0.5)
-            +SetTowerSpeedCommand(0.35)
-            +SetIntakeSpeedCommand(1.0)
-        }
-    }
+//    +TrajectoryTrackerCommand(
+//        Drivetrain,
+//        Constants.RAMSETE_B,
+//        Constants.RAMSETE_ZETA,
+//        trajectory = Trajectories.shootPositionToGenerator,
+//        leftPid = Drivetrain.leftPid,
+//        rightPid = Drivetrain.rightPid,
+//        feedforward = Drivetrain.feedforward
+//    )
+//    +WaitCommand(0.75)
+//    +SetIntakeSpeedCommand(0.0)
+//    +parallelRace {
+//        +AutoSetFlywheelReferenceCommand()
+//        +sequential {
+//            +TrajectoryTrackerCommand(
+//                Drivetrain,
+//                Constants.RAMSETE_B,
+//                Constants.RAMSETE_ZETA,
+//                trajectory = Trajectories.generatorToShootPosition,
+//                leftPid = Drivetrain.leftPid,
+//                rightPid = Drivetrain.rightPid,
+//                feedforward = Drivetrain.feedforward
+//            )
+//            +WaitCommand(0.5)
+//            +SetTowerSpeedCommand(0.35)
+//            +SetIntakeSpeedCommand(1.0)
+//            +WaitCommand(999.0)
+//        }
+//    }
 }
 

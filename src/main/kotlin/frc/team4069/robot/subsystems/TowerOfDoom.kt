@@ -64,7 +64,7 @@ object TowerOfDoom : SaturnSubsystem() {
         elevatorOut.enableInterrupts()
         elevatorOut.setUpSourceEdge(true, true)
 
-        defaultCommand = ControlTowerCommand()
+//        defaultCommand = ControlTowerCommand()
     }
 
     fun setTowerDutyCycle(dutyCycle: Double) {

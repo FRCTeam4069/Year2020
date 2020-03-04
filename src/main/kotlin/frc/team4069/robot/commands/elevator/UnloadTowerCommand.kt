@@ -8,12 +8,8 @@ class UnloadTowerCommand : SaturnCommand(TowerOfDoom) {
         TowerOfDoom.setTowerDutyCycle(0.3)
     }
 
-    override fun execute() {
-        println(TowerOfDoom.ballCount.get())
-    }
-
     override fun isFinished(): Boolean {
-        return TowerOfDoom.ballCount.get() == 0
+        return TowerOfDoom.ballCount.get() == 0 && TowerOfDoom.elevatorOut.get()
     }
 
     override fun end(interrupted: Boolean) {

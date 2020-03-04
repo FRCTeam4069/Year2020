@@ -70,6 +70,7 @@ object Flywheel : SaturnSubsystem() {
 
         encoder.setReverseDirection(false)
         encoder.distancePerPulse = TAU / 2048.0 // encoder ppr = 2048
+        encoder.samplesToAverage = 25
 
 //        zmqContext = ZContext(2)
 //        sock = zmqContext!!.createSocket(SocketType.PUSH)

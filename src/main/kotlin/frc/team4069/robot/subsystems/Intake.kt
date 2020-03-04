@@ -1,5 +1,6 @@
 package frc.team4069.robot.subsystems
 
+import com.revrobotics.CANDigitalInput
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ControlType
@@ -11,6 +12,7 @@ object Intake : SaturnSubsystem() {
     private val intakeSpark = CANSparkMax(RobotMap.Intake.SPARK_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     val pivotSpark = CANSparkMax(RobotMap.Intake.PIVOT_SPARK_ID, CANSparkMaxLowLevel.MotorType.kBrushless)
     val pivotEncoder = pivotSpark.encoder
+//    val pivotBackwardLimit = pivotSpark.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed)
 
     private var pivotState = PivotPosition.Retracted
 
@@ -18,6 +20,8 @@ object Intake : SaturnSubsystem() {
         intakeSpark.inverted = false
         pivotEncoder.position = 0.0
 
+//        pivotBackwardLimit.enableLimitSwitch(true)
+//
         pivotSpark.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0F)
         pivotSpark.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 27F)
         pivotSpark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true)
@@ -35,6 +39,9 @@ object Intake : SaturnSubsystem() {
         if(pivotEncoder.position < 0.5 && pivotState == PivotPosition.Retracted) {
             pivotSpark.set(0.0)
         }
+//        if(pivotBackwardLimit.get()) {
+//            pivotEncoder.position = 0.0
+//        }
     }
 
     fun setPivotState(pos: PivotPosition) {
