@@ -1,4 +1,4 @@
-package frc.team4069.robot
+package frc.team4069.robot.util
 
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.RobotController

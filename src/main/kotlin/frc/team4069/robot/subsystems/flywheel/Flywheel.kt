@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Timer
 import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
@@ -29,11 +30,13 @@ import org.zeromq.ZMQ
 import java.util.*
 
 object Flywheel : SaturnSubsystem() {
-    val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
-    val slave = TalonFX(RobotMap.Flywheel.SLAVE_TALON_ID)
+    private val talon = TalonFX(RobotMap.Flywheel.MASTER_TALON_ID)
+    private val slave = TalonFX(RobotMap.Flywheel.SLAVE_TALON_ID)
 
     private val encoder =
         Encoder(RobotMap.Flywheel.ENCODER_A, RobotMap.Flywheel.ENCODER_B, true, CounterBase.EncodingType.k1X)
+
+    private lateinit var controllerThread: Notifier
 
     val controller = FlywheelController()
 
@@ -81,7 +84,7 @@ object Flywheel : SaturnSubsystem() {
         val delta = DeltaTime()
         val rand = Random()
         val R = 0.018.ohm
-        GlobalScope.launchFrequency(100.hertz) {
+        controllerThread = Notifier {
             controller.measuredVelocity = encoderVelocity
             val dt = delta.updateTime(Timer.getFPGATimestamp().second)
             val u = controller.update(dt)
@@ -104,6 +107,8 @@ object Flywheel : SaturnSubsystem() {
                 talon.set(ControlMode.PercentOutput, u / talon.busVoltage.volt)
             }
         }
+
+        controllerThread.startPeriodic(0.01)
     }
 
     override fun setNeutral() {

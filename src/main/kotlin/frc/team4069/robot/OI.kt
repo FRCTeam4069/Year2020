@@ -104,11 +104,6 @@ object OI {
             }
         }
 
-
-        button(kX) {
-            changeOn(AutoIndexBallsCommand())
-        }
-
         button(kB) {
             val command = AutoSetFlywheelReferenceCommand()
             changeOn {

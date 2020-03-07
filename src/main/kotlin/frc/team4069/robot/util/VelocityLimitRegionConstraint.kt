@@ -1,7 +1,8 @@
-package frc.team4069.robot
+package frc.team4069.robot.util
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint
+import frc.team4069.robot.util.Rectangle2d
 import frc.team4069.saturn.lib.mathematics.units.SIUnit
 import frc.team4069.saturn.lib.mathematics.units.conversions.LinearVelocity
 

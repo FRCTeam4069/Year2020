@@ -2,6 +2,7 @@ package frc.team4069.robot.commands.auto
 
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.WaitCommand
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import frc.team4069.robot.Constants
 import frc.team4069.robot.Trajectories
 import frc.team4069.robot.commands.elevator.SetTowerSpeedCommand
@@ -34,46 +35,47 @@ fun FriendlyTrenchAuto() = sequential {
                 Drivetrain,
                 Constants.RAMSETE_B,
                 Constants.RAMSETE_ZETA,
-                trajectory = Trajectories.blueFriendlyWallToShoot,
+                trajectory = Trajectories.friendlyWallToShoot,
                 leftPid = Drivetrain.leftPid,
                 rightPid = Drivetrain.rightPid,
                 feedforward = Drivetrain.feedforward,
                 resetPose = true
             )
-            +WaitCommand(0.75)
-            +UnloadTowerCommand()
+            +WaitUntilCommand { Flywheel.controller.atGoal }
+            +SetTowerSpeedCommand(0.65)
+            +WaitCommand(0.55)
+            +SetTowerSpeedCommand(0.0)
         }
     }
     +AdjustIntakePivotCommand(Intake.PivotPosition.Extended)
-    +SetIntakeSpeedCommand(1.0)
-//    +TrajectoryTrackerCommand(
-//        Drivetrain,
-//        Constants.RAMSETE_B,
-//        Constants.RAMSETE_ZETA,
-//        trajectory = Trajectories.shootPositionToGenerator,
-//        leftPid = Drivetrain.leftPid,
-//        rightPid = Drivetrain.rightPid,
-//        feedforward = Drivetrain.feedforward
-//    )
-//    +WaitCommand(0.75)
-//    +SetIntakeSpeedCommand(0.0)
-//    +parallelRace {
-//        +AutoSetFlywheelReferenceCommand()
-//        +sequential {
-//            +TrajectoryTrackerCommand(
-//                Drivetrain,
-//                Constants.RAMSETE_B,
-//                Constants.RAMSETE_ZETA,
-//                trajectory = Trajectories.generatorToShootPosition,
-//                leftPid = Drivetrain.leftPid,
-//                rightPid = Drivetrain.rightPid,
-//                feedforward = Drivetrain.feedforward
-//            )
-//            +WaitCommand(0.5)
-//            +SetTowerSpeedCommand(0.35)
-//            +SetIntakeSpeedCommand(1.0)
-//            +WaitCommand(999.0)
-//        }
-//    }
+    +SetIntakeSpeedCommand(0.8)
+    +SetTowerSpeedCommand(0.2)
+    +TrajectoryTrackerCommand(
+        Drivetrain,
+        Constants.RAMSETE_B,
+        Constants.RAMSETE_ZETA,
+        trajectory = Trajectories.shootPositionToTrench,
+        leftPid = Drivetrain.leftPid,
+        rightPid = Drivetrain.rightPid,
+        feedforward = Drivetrain.feedforward
+    )
+    +SetIntakeSpeedCommand(0.0)
+    +SetTowerSpeedCommand(0.0)
+    +parallel {
+        +AutoSetFlywheelReferenceCommand()
+        +sequential {
+            +TrajectoryTrackerCommand(
+                Drivetrain,
+                Constants.RAMSETE_B,
+                Constants.RAMSETE_ZETA,
+                trajectory = Trajectories.trenchToShootPosition,
+                leftPid = Drivetrain.leftPid,
+                rightPid = Drivetrain.rightPid,
+                feedforward = Drivetrain.feedforward
+            )
+            +WaitUntilCommand { Flywheel.controller.atGoal }
+            +SetIntakeSpeedCommand(1.0)
+            +SetTowerSpeedCommand(0.65)
+        }
+    }
 }
-

@@ -29,7 +29,9 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
         97.0 to InterpolatableDouble(1.7),
         107.0 to InterpolatableDouble(1.67),
         118.0 to InterpolatableDouble(1.59),
-        128.0 to InterpolatableDouble(1.6)
+        121.4 to InterpolatableDouble(1.65),
+        128.0 to InterpolatableDouble(1.6),
+        132.5 to InterpolatableDouble(1.63)
     )
 
     override fun initialize() {

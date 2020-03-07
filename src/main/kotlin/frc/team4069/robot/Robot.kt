@@ -1,8 +1,9 @@
 package frc.team4069.robot
 
 import edu.wpi.first.wpilibj.Compressor
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import edu.wpi.first.wpilibj2.command.InstantCommand
+import frc.team4069.robot.commands.TestCommand
 import frc.team4069.robot.commands.auto.EnemyTrenchAuto
 import frc.team4069.robot.commands.auto.FriendlyTrenchAuto
 import frc.team4069.robot.commands.climber.ControlClimberCommand
@@ -13,11 +14,10 @@ import frc.team4069.robot.commands.drive.DrivetrainTests
 import frc.team4069.robot.commands.elevator.ControlTowerCommand
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
+import frc.team4069.robot.util.PressureSensor
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
-import frc.team4069.saturn.lib.mathematics.units.degree
-import frc.team4069.saturn.lib.mathematics.units.rpm
-import frc.team4069.saturn.lib.subsystem.TrajectoryTrackerCommand
+import frc.team4069.saturn.lib.shuffleboard.logging.sendableChooser
 
 object Robot : SaturnRobot() {
 
@@ -25,6 +25,11 @@ object Robot : SaturnRobot() {
     private val pressureSensor = PressureSensor(0)
     private val compressor = Compressor()
     var compressorStarted = false
+
+    private val autoChooser = sendableChooser(
+        "Opposite Trench Auto (Blue)" to EnemyTrenchAuto(),
+        "Same Side Trench Auto (Blue)" to FriendlyTrenchAuto()
+    )
 
 
     override fun robotInit() {
@@ -39,20 +44,19 @@ object Robot : SaturnRobot() {
         Vision
         Trajectories
 
+        SmartDashboard.putData("Autonomous Mode", autoChooser)
+
         // Register controllers for control handling
-//        +OI.controller
-//        +OI.operatorController
+        +OI.controller
+        +OI.operatorController
     }
 
     override fun teleopInit() {
-//        Flywheel.enable()
         OperatorDriveCommand().schedule()
-//        ControlHoodCommand().schedule()
         ControlClimberCommand().schedule()
         ControlIntakeCommand().schedule()
         ControlColourWheelCommand().schedule()
         ControlTowerCommand().schedule()
-//        Hood.setPosition(0.75)
     }
 
     override fun robotPeriodic() {
@@ -70,11 +74,7 @@ object Robot : SaturnRobot() {
     override fun autonomousInit() {
 //        Flywheel.enable()
 //        Flywheel.setReference(1000.rpm)
-//        EnemyTrenchAuto().schedule()
-        FriendlyTrenchAuto().schedule()
-    }
-
-    override fun autonomousPeriodic() {
+        autoChooser.selected.schedule()
     }
 
     override fun disabledInit() {

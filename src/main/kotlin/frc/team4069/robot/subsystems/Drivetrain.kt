@@ -24,6 +24,7 @@ object Drivetrain : TankDriveSubsystem() {
 
     // Sensitivity of operator inputs for each gear
     const val kHighGearSensitivity = 0.55
+    const val kHighGearMovingSensitivity = 0.45
     const val kLowGearSensitivity = 0.625
 
     var gear by Delegates.observable(Gear.High) { _, old, new ->
@@ -82,7 +83,7 @@ object Drivetrain : TankDriveSubsystem() {
     private val _gyro = SaturnPigeon(Climber.sliderTalon)
     override val gyro = { _gyro() }
 
-    override val kinematics = DifferentialDriveKinematics(1.3) // 0.5717 tuned
+    override val kinematics = DifferentialDriveKinematics(1.2) // 0.5717 tuned
     override val localization = DifferentialDriveOdometry(gyro(), Pose2d())
 
     val velocity
