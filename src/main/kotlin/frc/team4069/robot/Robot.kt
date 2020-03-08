@@ -27,8 +27,8 @@ object Robot : SaturnRobot() {
     var compressorStarted = false
 
     private val autoChooser = sendableChooser(
-        "Opposite Trench Auto (Blue)" to EnemyTrenchAuto(),
-        "Same Side Trench Auto (Blue)" to FriendlyTrenchAuto()
+        "Opposite Trench Auto" to EnemyTrenchAuto(),
+        "Same Side Trench Auto" to FriendlyTrenchAuto()
     )
 
 

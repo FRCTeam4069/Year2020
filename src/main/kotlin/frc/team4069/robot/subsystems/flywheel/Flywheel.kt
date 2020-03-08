@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.CounterBase
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team4069.robot.PublishedData
 import frc.team4069.robot.RobotMap
 import frc.team4069.saturn.lib.commands.SaturnSubsystem
@@ -40,7 +41,7 @@ object Flywheel : SaturnSubsystem() {
 
     val controller = FlywheelController()
 
-    val TRENCH_SHOT_PRESET = 3850.rpm
+    val TRENCH_SHOT_PRESET = 4000.rpm
     val CLOSE_SHOT_PRESET = 1700.rpm
 
     fun enable() {
@@ -91,11 +92,6 @@ object Flywheel : SaturnSubsystem() {
             if (controller.enabled) {
                 val now = Timer.getFPGATimestamp()
 
-                // For model tuning
-//                val scale = (12.volt - R * talon.supplyCurrent.amp * 2.0) / 12.volt
-//                val plantU = u * scale
-//                controller.plant.update(controller.plant.x, mat(`1`, `1`).fill(plantU.value), dt.value)
-
                 val data = PublishedData(true, now, mapOf(
                     "Voltage" to u.value,
                     "Velocity" to encoderVelocity.value,
@@ -109,6 +105,10 @@ object Flywheel : SaturnSubsystem() {
         }
 
         controllerThread.startPeriodic(0.01)
+    }
+
+    override fun periodic() {
+        SmartDashboard.putBoolean("Flywheel ready?", controller.enabled && controller.atGoal)
     }
 
     override fun setNeutral() {

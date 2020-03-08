@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
 object Drivetrain : TankDriveSubsystem() {
 
     // Sensitivity of operator inputs for each gear
-    const val kHighGearSensitivity = 0.55
+    const val kHighGearSensitivity = 0.35
     const val kHighGearMovingSensitivity = 0.45
     const val kLowGearSensitivity = 0.625
 
@@ -110,11 +110,13 @@ object Drivetrain : TankDriveSubsystem() {
 
         leftMotor.canSparkMax.setSmartCurrentLimit(50)
         rightMotor.canSparkMax.setSmartCurrentLimit(50)
+        leftSlave.canSparkMax.setSmartCurrentLimit(50)
+        rightSlave.canSparkMax.setSmartCurrentLimit(50)
 
-        leftMotor.brakeMode = false
-        rightMotor.brakeMode = false
-        leftSlave.brakeMode = false
-        rightSlave.brakeMode = false
+        leftMotor.brakeMode = true
+        rightMotor.brakeMode = true
+        leftSlave.brakeMode = true
+        rightSlave.brakeMode = true
 
         defaultCommand = OperatorDriveCommand()
         _gyro.setFusedHeading(0.0)
@@ -141,6 +143,11 @@ object Drivetrain : TankDriveSubsystem() {
 
     fun resetGyro(angle: SIUnit<Unitless>) {
         _gyro.setFusedHeading(angle.degree)
+    }
+
+    fun arcadeDrive(linear: Double, angular: Double) {
+        leftMotor.setDutyCycle(linear + angular)
+        rightMotor.setDutyCycle(linear - angular)
     }
 
     enum class Gear {

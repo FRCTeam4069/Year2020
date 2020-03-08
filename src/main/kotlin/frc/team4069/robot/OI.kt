@@ -7,6 +7,7 @@ import frc.team4069.robot.commands.elevator.AutoIndexBallsCommand
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.saturn.lib.hid.*
+import frc.team4069.saturn.lib.mathematics.units.rpm
 import frc.team4069.saturn.lib.util.deadband
 import frc.team4069.saturn.lib.vision.LimelightCamera
 
@@ -80,7 +81,7 @@ object OI {
             changeOn {
                     Flywheel.enable()
                     Vision.ledState = LimelightCamera.LEDState.ForceOn
-                    Flywheel.setReference(Flywheel.CLOSE_SHOT_PRESET)
+                    Flywheel.setReference(2350.rpm)
             }
 
             changeOff {
@@ -93,8 +94,8 @@ object OI {
             changeOn {
                 Flywheel.enable()
                 Vision.ledState = LimelightCamera.LEDState.ForceOn
-                Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
-                Hood.setPosition(1.0)
+                Flywheel.setReference(2500.rpm)
+                Hood.setPosition(0.75)
             }
 
             changeOff {
