@@ -14,7 +14,10 @@ import frc.team4069.robot.commands.drive.DrivetrainTests
 import frc.team4069.robot.commands.elevator.ControlTowerCommand
 import frc.team4069.robot.subsystems.*
 import frc.team4069.robot.subsystems.flywheel.Flywheel
+import frc.team4069.robot.util.InterpolatableDouble
 import frc.team4069.robot.util.PressureSensor
+import frc.team4069.robot.util.extrapolate
+import frc.team4069.robot.util.interpolatableMapOf
 import frc.team4069.saturn.lib.SaturnRobot
 import frc.team4069.saturn.lib.hid.SaturnHID
 import frc.team4069.saturn.lib.shuffleboard.logging.sendableChooser
@@ -49,6 +52,12 @@ object Robot : SaturnRobot() {
         // Register controllers for control handling
         +OI.controller
         +OI.operatorController
+
+        val map = interpolatableMapOf(
+            1.0 to InterpolatableDouble(3.0),
+            2.0 to InterpolatableDouble(5.0)
+        )
+        println("EXTRAP ${map.extrapolate(0.0)}")
     }
 
     override fun teleopInit() {

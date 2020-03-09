@@ -26,7 +26,7 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
         88.0 to InterpolatableDouble(1.65)
     )
     private val distancesLUT075 = interpolatableMapOf(
-        88.0 to InterpolatableDouble(1.9),
+        88.0 to InterpolatableDouble(2.1),
         97.0 to InterpolatableDouble(1.7),
         107.0 to InterpolatableDouble(1.67),
         118.0 to InterpolatableDouble(1.59),
@@ -42,20 +42,11 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
 
     }
 
-    fun getMagicMultiplierAngle05(distance: Double) : Double {
-//        val distances = arrayOf(71, 83, 88)
-//        val multipliers = arrayOf(1.9, 1.7, 1.65)
-//        for(i in 1 until distances.size) {
-//            if (distances[i] > distance) {
-//                val p = (distance - distances[i - 1]) / (distances[i] - distances[i - 1])
-//                return multipliers[i - 1] + (p * (multipliers[i] - multipliers[i - 1]))
-//            }
-//        }
-//        return -1.0
+    fun getMagicMultiplierAngle05(distance: Double): Double {
         return distancesLUT05[distance]?.value ?: distancesLUT05.extrapolate(distance)?.value ?: Double.NaN
     }
 
-    fun getMagicMultiplierAngle075(distance: Double) : Double {
+    fun getMagicMultiplierAngle075(distance: Double): Double {
 //        val distances = arrayOf(88, 97, 107, 118)
 //        val multipliers = arrayOf(1.9, 1.7, 1.67, 1.59)
 //        for(i in 1 until distances.size) {
@@ -75,7 +66,6 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
         val xMed = xFilter.calculate(pose.translation.xU.inch).inch
         val yMed = yFilter.calculate(pose.translation.yU.inch).inch
         val dist = sqrt(xMed.pow2() + yMed.pow2())
-        println(dist.inch)
         if (dist > 93.inch) {
             higherHood = true
             Hood.setPosition(0.75)
@@ -83,15 +73,12 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
             higherHood = false
             Hood.setPosition(0.5)
         }
-        val spd = when {
-            higherHood -> {
-                getMagicMultiplierAngle075(dist.inch) * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
-            }
-            else -> {
-                getMagicMultiplierAngle05(dist.inch) * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
-            }
+        val spd = if (higherHood) {
+            getMagicMultiplierAngle075(dist.inch) * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
+        } else {
+            getMagicMultiplierAngle05(dist.inch) * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
         }
-        if(!spd.value.isNaN()) {
+        if (!spd.value.isNaN()) {
             Flywheel.setReference(spd)
         }
     }

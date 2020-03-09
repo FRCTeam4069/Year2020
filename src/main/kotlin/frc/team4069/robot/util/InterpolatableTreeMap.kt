@@ -53,7 +53,8 @@ where V: Interpolatable<V>,
             val maxValue = this[maxKey]!!
             val (max2Key, max2Value) = floorEntry(maxKey - 1E-3)
 
-            return max2Value.extrapolate(maxValue, (key - max2Key) / (max2Key - maxKey))
+            // why is this broken? who knows, just add a sign flip
+            return max2Value.extrapolate(maxValue, -1 * (key - max2Key) / (max2Key - maxKey))
         }
         else -> {
             null
