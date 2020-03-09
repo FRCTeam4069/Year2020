@@ -7,6 +7,7 @@ import frc.team4069.robot.subsystems.Vision
 import frc.team4069.robot.subsystems.flywheel.Flywheel
 import frc.team4069.robot.util.InterpolatableDouble
 import frc.team4069.robot.util.InterpolatableTreeMap
+import frc.team4069.robot.util.extrapolate
 import frc.team4069.robot.util.interpolatableMapOf
 import frc.team4069.saturn.lib.commands.SaturnCommand
 import frc.team4069.saturn.lib.mathematics.twodim.geometry.xU
@@ -51,7 +52,7 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
 //            }
 //        }
 //        return -1.0
-        return distancesLUT05[distance]?.value ?: Double.NaN
+        return distancesLUT05[distance]?.value ?: distancesLUT05.extrapolate(distance)?.value ?: Double.NaN
     }
 
     fun getMagicMultiplierAngle075(distance: Double) : Double {
@@ -64,7 +65,7 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
 //            }
 //        }
 //        return -1.0
-        return distancesLUT075[distance]?.value ?: Double.NaN
+        return distancesLUT075[distance]?.value ?: distancesLUT075.extrapolate(distance)?.value ?: Double.NaN
     }
 
     var higherHood = false
@@ -75,19 +76,18 @@ class AutoSetFlywheelReferenceCommand : SaturnCommand(Flywheel, Hood) {
         val yMed = yFilter.calculate(pose.translation.yU.inch).inch
         val dist = sqrt(xMed.pow2() + yMed.pow2())
         println(dist.inch)
+        if (dist > 93.inch) {
+            higherHood = true
+            Hood.setPosition(0.75)
+        } else if (dist < 83.inch) {
+            higherHood = false
+            Hood.setPosition(0.5)
+        }
         val spd = when {
-            dist > 88.inch -> {
-                if(!higherHood) {
-                    higherHood = true
-                    Hood.setPosition(0.75)
-                }
+            higherHood -> {
                 getMagicMultiplierAngle075(dist.inch) * (Constants.FLYWHEEL_SPD_M_075_HOOD * dist + Constants.FLYWHEEL_SPD_B_075_HOOD)
             }
             else -> {
-                if(higherHood) {
-                    higherHood = false
-                    Hood.setPosition(0.5)
-                }
                 getMagicMultiplierAngle05(dist.inch) * (Constants.FLYWHEEL_SPD_M_05_HOOD * dist + Constants.FLYWHEEL_SPD_B_05_HOOD)
             }
         }
