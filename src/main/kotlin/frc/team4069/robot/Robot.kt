@@ -3,6 +3,7 @@ package frc.team4069.robot
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.team4069.robot.commands.ControlHoodCommand
 import frc.team4069.robot.commands.TestCommand
 import frc.team4069.robot.commands.auto.EnemyTrenchAuto
 import frc.team4069.robot.commands.auto.FriendlyTrenchAuto
@@ -52,12 +53,6 @@ object Robot : SaturnRobot() {
         // Register controllers for control handling
         +OI.controller
         +OI.operatorController
-
-        val map = interpolatableMapOf(
-            1.0 to InterpolatableDouble(3.0),
-            2.0 to InterpolatableDouble(5.0)
-        )
-        println("EXTRAP ${map.extrapolate(0.0)}")
     }
 
     override fun teleopInit() {

@@ -94,6 +94,21 @@ object OI {
             changeOn {
                 Flywheel.enable()
                 Vision.ledState = LimelightCamera.LEDState.ForceOn
+                Flywheel.setReference(Flywheel.TRENCH_SHOT_PRESET)
+                Hood.setPosition(1.0)
+            }
+
+            changeOff {
+                Flywheel.disable()
+                Vision.ledState = LimelightCamera.LEDState.ForceOff
+                Hood.setPosition(0.0)
+            }
+        }
+
+        button(kX) {
+            changeOn {
+                Flywheel.enable()
+                Vision.ledState = LimelightCamera.LEDState.ForceOn
                 Flywheel.setReference(2500.rpm)
                 Hood.setPosition(0.75)
             }
